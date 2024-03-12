@@ -29,7 +29,7 @@ impl Application for Client {
     }
 
     fn title(&self) -> String {
-        String::from("WebSocket - Iced")
+        String::from("Multiplayer client")
     }
 
     fn update(&mut self, message: Message) -> Command<Message> {
