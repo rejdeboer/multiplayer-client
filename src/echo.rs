@@ -8,7 +8,7 @@ use futures::stream::StreamExt;
 use async_tungstenite::tungstenite;
 use std::fmt;
 
-pub fn connect() -> Subscription<Event> {
+pub fn connect(server_url: String) -> Subscription<Event> {
     struct Connect;
 
     subscription::channel(
@@ -20,9 +20,7 @@ pub fn connect() -> Subscription<Event> {
             loop {
                 match &mut state {
                     State::Disconnected => {
-                        const ECHO_SERVER: &str = "ws://127.0.0.1:3030";
-
-                        match async_tungstenite::tokio::connect_async(ECHO_SERVER).await {
+                        match async_tungstenite::tokio::connect_async(&server_url).await {
                             Ok((websocket, _)) => {
                                 let (sender, receiver) = mpsc::channel(100);
 

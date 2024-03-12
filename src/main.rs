@@ -2,6 +2,7 @@ use iced::alignment::{self, Alignment};
 use iced::executor;
 use iced::widget::{button, column, container, row, scrollable, text, text_input};
 use iced::{Application, Color, Command, Element, Length, Settings, Subscription, Theme};
+use multiplayer_client::configuration::{get_configuration, ClientSettings};
 use multiplayer_client::echo;
 use once_cell::sync::Lazy;
 
@@ -9,11 +10,11 @@ pub fn main() -> iced::Result {
     WebSocket::run(Settings::default())
 }
 
-#[derive(Default)]
 struct WebSocket {
     messages: Vec<echo::Message>,
     new_message: String,
     state: State,
+    settings: ClientSettings,
 }
 
 #[derive(Debug, Clone)]
@@ -30,7 +31,14 @@ impl Application for WebSocket {
     type Executor = executor::Default;
 
     fn new(_flags: Self::Flags) -> (Self, Command<Message>) {
-        (Self::default(), Command::none())
+        let app = Self {
+            messages: vec![],
+            new_message: String::default(),
+            state: State::default(),
+            settings: get_configuration().expect("failed to get configuration"),
+        };
+
+        (app, Command::none())
     }
 
     fn title(&self) -> String {
@@ -79,7 +87,7 @@ impl Application for WebSocket {
     }
 
     fn subscription(&self) -> Subscription<Message> {
-        echo::connect().map(Message::Echo)
+        echo::connect(self.settings.server_url.clone()).map(Message::Echo)
     }
 
     fn view(&self) -> Element<Message> {

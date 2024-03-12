@@ -4,7 +4,7 @@ pub enum Environment {
 }
 
 #[derive(serde::Deserialize, Clone)]
-pub struct Settings {
+pub struct ClientSettings {
     pub server_url: String,
 }
 
@@ -31,12 +31,10 @@ impl TryFrom<String> for Environment {
     }
 }
 
-pub fn get_configuration() -> Result<Settings, config::ConfigError> {
+pub fn get_configuration() -> Result<ClientSettings, config::ConfigError> {
     let mut settings = config::Config::default();
     let base_path = std::env::current_dir().expect("Failed to determine the current directory");
     let configuration_directory = base_path.join("configuration");
-
-    settings.merge(config::File::from(configuration_directory.join("base")).required(true))?;
 
     let environment: Environment = std::env::var("ENVIRONMENT")
         .unwrap_or_else(|_| "local".into())
