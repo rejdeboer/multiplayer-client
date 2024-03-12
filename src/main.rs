@@ -3,15 +3,15 @@ use iced::executor;
 use iced::widget::{button, column, container, row, scrollable, text, text_input};
 use iced::{Application, Color, Command, Element, Length, Settings, Subscription, Theme};
 use multiplayer_client::configuration::{get_configuration, ClientSettings};
-use multiplayer_client::echo;
+use multiplayer_client::websocket;
 use once_cell::sync::Lazy;
 
 pub fn main() -> iced::Result {
-    WebSocket::run(Settings::default())
+    Client::run(Settings::default())
 }
 
-struct WebSocket {
-    messages: Vec<echo::Message>,
+struct Client {
+    messages: Vec<websocket::Message>,
     new_message: String,
     state: State,
     settings: ClientSettings,
@@ -20,11 +20,11 @@ struct WebSocket {
 #[derive(Debug, Clone)]
 enum Message {
     NewMessageChanged(String),
-    Send(echo::Message),
-    Echo(echo::Event),
+    Send(websocket::Message),
+    Echo(websocket::Event),
 }
 
-impl Application for WebSocket {
+impl Application for Client {
     type Message = Message;
     type Theme = Theme;
     type Flags = ();
@@ -63,21 +63,21 @@ impl Application for WebSocket {
                 State::Disconnected => Command::none(),
             },
             Message::Echo(event) => match event {
-                echo::Event::Connected(connection) => {
+                websocket::Event::Connected(connection) => {
                     self.state = State::Connected(connection);
 
-                    self.messages.push(echo::Message::connected());
+                    self.messages.push(websocket::Message::connected());
 
                     Command::none()
                 }
-                echo::Event::Disconnected => {
+                websocket::Event::Disconnected => {
                     self.state = State::Disconnected;
 
-                    self.messages.push(echo::Message::disconnected());
+                    self.messages.push(websocket::Message::disconnected());
 
                     Command::none()
                 }
-                echo::Event::MessageReceived(message) => {
+                websocket::Event::MessageReceived(message) => {
                     self.messages.push(message);
 
                     scrollable::snap_to(MESSAGE_LOG.clone(), scrollable::RelativeOffset::END)
@@ -87,7 +87,7 @@ impl Application for WebSocket {
     }
 
     fn subscription(&self) -> Subscription<Message> {
-        echo::connect(self.settings.server_url.clone()).map(Message::Echo)
+        websocket::connect(self.settings.server_url.clone()).map(Message::Echo)
     }
 
     fn view(&self) -> Element<Message> {
@@ -122,7 +122,7 @@ impl Application for WebSocket {
             .padding([0, 20]);
 
             if matches!(self.state, State::Connected(_)) {
-                if let Some(message) = echo::Message::new(&self.new_message) {
+                if let Some(message) = websocket::Message::new(&self.new_message) {
                     input = input.on_submit(Message::Send(message.clone()));
                     button = button.on_press(Message::Send(message));
                 }
@@ -143,7 +143,7 @@ impl Application for WebSocket {
 
 enum State {
     Disconnected,
-    Connected(echo::Connection),
+    Connected(websocket::Connection),
 }
 
 impl Default for State {
