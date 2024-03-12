@@ -1,27 +1,15 @@
-use iced::alignment::{self, Alignment};
 use iced::executor;
-use iced::widget::{button, column, container, row, scrollable, text, text_input};
-use iced::{Application, Color, Command, Element, Length, Settings, Subscription, Theme};
-use multiplayer_client::configuration::{get_configuration, ClientSettings};
-use multiplayer_client::websocket;
-use once_cell::sync::Lazy;
+use iced::{Application, Command, Element, Settings, Subscription, Theme};
+use multiplayer_client::configuration::get_configuration;
+use multiplayer_client::message::Message;
+use multiplayer_client::view::{Chat, View};
 
 pub fn main() -> iced::Result {
     Client::run(Settings::default())
 }
 
 struct Client {
-    messages: Vec<websocket::Message>,
-    new_message: String,
-    state: State,
-    settings: ClientSettings,
-}
-
-#[derive(Debug, Clone)]
-enum Message {
-    NewMessageChanged(String),
-    Send(websocket::Message),
-    Echo(websocket::Event),
+    current_view: Box<dyn View>,
 }
 
 impl Application for Client {
@@ -31,11 +19,10 @@ impl Application for Client {
     type Executor = executor::Default;
 
     fn new(_flags: Self::Flags) -> (Self, Command<Message>) {
+        let settings = get_configuration().expect("failed to get configuration");
+
         let app = Self {
-            messages: vec![],
-            new_message: String::default(),
-            state: State::default(),
-            settings: get_configuration().expect("failed to get configuration"),
+            current_view: Box::new(Chat::new(settings.clone())),
         };
 
         (app, Command::none())
@@ -47,109 +34,15 @@ impl Application for Client {
 
     fn update(&mut self, message: Message) -> Command<Message> {
         match message {
-            Message::NewMessageChanged(new_message) => {
-                self.new_message = new_message;
-
-                Command::none()
-            }
-            Message::Send(message) => match &mut self.state {
-                State::Connected(connection) => {
-                    self.new_message.clear();
-
-                    connection.send(message);
-
-                    Command::none()
-                }
-                State::Disconnected => Command::none(),
-            },
-            Message::Echo(event) => match event {
-                websocket::Event::Connected(connection) => {
-                    self.state = State::Connected(connection);
-
-                    self.messages.push(websocket::Message::connected());
-
-                    Command::none()
-                }
-                websocket::Event::Disconnected => {
-                    self.state = State::Disconnected;
-
-                    self.messages.push(websocket::Message::disconnected());
-
-                    Command::none()
-                }
-                websocket::Event::MessageReceived(message) => {
-                    self.messages.push(message);
-
-                    scrollable::snap_to(MESSAGE_LOG.clone(), scrollable::RelativeOffset::END)
-                }
-            },
+            _ => self.current_view.update(message),
         }
     }
 
     fn subscription(&self) -> Subscription<Message> {
-        websocket::connect(self.settings.server_url.clone()).map(Message::Echo)
+        self.current_view.subscription()
     }
 
     fn view(&self) -> Element<Message> {
-        let message_log: Element<_> = if self.messages.is_empty() {
-            container(
-                text("Your messages will appear here...").style(Color::from_rgb8(0x88, 0x88, 0x88)),
-            )
-            .width(Length::Fill)
-            .height(Length::Fill)
-            .center_x()
-            .center_y()
-            .into()
-        } else {
-            scrollable(
-                column(self.messages.iter().cloned().map(text).map(Element::from)).spacing(10),
-            )
-            .id(MESSAGE_LOG.clone())
-            .height(Length::Fill)
-            .into()
-        };
-
-        let new_message_input = {
-            let mut input = text_input("Type a message...", &self.new_message)
-                .on_input(Message::NewMessageChanged)
-                .padding(10);
-
-            let mut button = button(
-                text("Send")
-                    .height(40)
-                    .vertical_alignment(alignment::Vertical::Center),
-            )
-            .padding([0, 20]);
-
-            if matches!(self.state, State::Connected(_)) {
-                if let Some(message) = websocket::Message::new(&self.new_message) {
-                    input = input.on_submit(Message::Send(message.clone()));
-                    button = button.on_press(Message::Send(message));
-                }
-            }
-
-            row![input, button]
-                .spacing(10)
-                .align_items(Alignment::Center)
-        };
-
-        column![message_log, new_message_input]
-            .height(Length::Fill)
-            .padding(20)
-            .spacing(10)
-            .into()
+        self.current_view.view()
     }
 }
-
-enum State {
-    Disconnected,
-    Connected(websocket::Connection),
-}
-
-impl Default for State {
-    fn default() -> Self {
-        Self::Disconnected
-    }
-}
-
-static MESSAGE_LOG: Lazy<scrollable::Id> = Lazy::new(scrollable::Id::unique);
