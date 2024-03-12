@@ -1,9 +1,8 @@
-mod echo;
-
 use iced::alignment::{self, Alignment};
 use iced::executor;
 use iced::widget::{button, column, container, row, scrollable, text, text_input};
 use iced::{Application, Color, Command, Element, Length, Settings, Subscription, Theme};
+use multiplayer_client::echo;
 use once_cell::sync::Lazy;
 
 pub fn main() -> iced::Result {
