@@ -1,7 +1,7 @@
 use iced::executor;
 use iced::{Application, Command, Element, Settings, Subscription, Theme};
-use multiplayer_client::configuration::get_configuration;
-use multiplayer_client::view::{Chat, View};
+use multiplayer_client::configuration::{get_configuration, ClientSettings};
+use multiplayer_client::view::{Chat, Login, View};
 use multiplayer_client::Message;
 
 pub fn main() -> iced::Result {
@@ -9,6 +9,7 @@ pub fn main() -> iced::Result {
 }
 
 struct Client {
+    settings: ClientSettings,
     current_view: Box<dyn View>,
 }
 
@@ -22,7 +23,8 @@ impl Application for Client {
         let settings = get_configuration().expect("configuration should be retrieved");
 
         let app = Self {
-            current_view: Box::new(Chat::new(settings.clone())),
+            current_view: Box::new(Login::new()),
+            settings,
         };
 
         (app, Command::none())
@@ -34,6 +36,14 @@ impl Application for Client {
 
     fn update(&mut self, message: Message) -> Command<Message> {
         match message {
+            Message::GoToLogin => {
+                self.current_view = Box::new(Login::new());
+                Command::none()
+            }
+            Message::GoToChat => {
+                self.current_view = Box::new(Chat::new(self.settings.clone()));
+                Command::none()
+            }
             _ => self.current_view.update(message),
         }
     }

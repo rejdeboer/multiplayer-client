@@ -1,9 +1,12 @@
 mod chat;
+mod login;
 
-pub use chat::*;
 use iced::{Command, Element, Subscription};
 
 use crate::Message;
+
+pub use chat::*;
+pub use login::*;
 
 pub trait View {
     fn update(&mut self, message: Message) -> Command<Message>;
