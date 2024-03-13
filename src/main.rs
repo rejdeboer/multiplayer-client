@@ -19,7 +19,7 @@ impl Application for Client {
     type Executor = executor::Default;
 
     fn new(_flags: Self::Flags) -> (Self, Command<Message>) {
-        let settings = get_configuration().expect("failed to get configuration");
+        let settings = get_configuration().expect("configuration should be retrieved");
 
         let app = Self {
             current_view: Box::new(Chat::new(settings.clone())),

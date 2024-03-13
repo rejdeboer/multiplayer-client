@@ -33,13 +33,13 @@ impl TryFrom<String> for Environment {
 
 pub fn get_configuration() -> Result<ClientSettings, config::ConfigError> {
     let mut settings = config::Config::default();
-    let base_path = std::env::current_dir().expect("Failed to determine the current directory");
+    let base_path = std::env::current_dir().expect("current directory should be determined");
     let configuration_directory = base_path.join("configuration");
 
     let environment: Environment = std::env::var("ENVIRONMENT")
         .unwrap_or_else(|_| "local".into())
         .try_into()
-        .expect("Failed to parse ENVIRONMENT");
+        .expect("environment should be parsed");
 
     settings.merge(
         config::File::from(configuration_directory.join(environment.as_str())).required(true),

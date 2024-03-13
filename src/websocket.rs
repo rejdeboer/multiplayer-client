@@ -94,7 +94,7 @@ impl Connection {
     pub fn send(&mut self, message: Message) {
         self.0
             .try_send(message)
-            .expect("Send message to echo server");
+            .expect("message should be sent to server");
     }
 }
 
