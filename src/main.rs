@@ -1,8 +1,8 @@
 use iced::executor;
 use iced::{Application, Command, Element, Settings, Subscription, Theme};
 use multiplayer_client::configuration::get_configuration;
-use multiplayer_client::message::Message;
 use multiplayer_client::view::{Chat, View};
+use multiplayer_client::Message;
 
 pub fn main() -> iced::Result {
     Client::run(Settings::default())

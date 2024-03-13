@@ -1,4 +1,4 @@
-use crate::{configuration::ClientSettings, message::Message, websocket};
+use crate::{configuration::ClientSettings, websocket, Message};
 use iced::{
     alignment,
     widget::{button, column, container, row, scrollable, text, text_input},

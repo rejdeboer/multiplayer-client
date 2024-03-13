@@ -3,7 +3,7 @@ mod chat;
 pub use chat::*;
 use iced::{Command, Element, Subscription};
 
-use crate::message::Message;
+use crate::Message;
 
 pub trait View {
     fn update(&mut self, message: Message) -> Command<Message>;
