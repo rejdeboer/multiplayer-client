@@ -1,3 +1,5 @@
+use core::panic;
+
 use crate::{configuration::ClientSettings, websocket, Message};
 use iced::{
     alignment,
@@ -65,6 +67,7 @@ impl View for Chat {
                     scrollable::snap_to(MESSAGE_LOG.clone(), scrollable::RelativeOffset::END)
                 }
             },
+            _ => panic!("Unknown message for chat: {:?}", message),
         }
     }
 
