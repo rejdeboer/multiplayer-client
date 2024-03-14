@@ -7,6 +7,9 @@ pub enum Message {
     GoToSignup,
     GoToChat,
 
+    // Login
+    LoginSubmit(String, String),
+
     // Chat
     NewMessageChanged(String),
     Send(websocket::Message),

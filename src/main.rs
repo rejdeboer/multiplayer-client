@@ -23,7 +23,7 @@ impl Application for Client {
         let settings = get_configuration().expect("configuration should be retrieved");
 
         let app = Self {
-            current_view: Box::new(Login::new()),
+            current_view: Box::new(Login::new(settings.clone())),
             settings,
         };
 
@@ -37,7 +37,7 @@ impl Application for Client {
     fn update(&mut self, message: Message) -> Command<Message> {
         match message {
             Message::GoToLogin => {
-                self.current_view = Box::new(Login::new());
+                self.current_view = Box::new(Login::new(self.settings.clone()));
                 Command::none()
             }
             Message::GoToChat => {
