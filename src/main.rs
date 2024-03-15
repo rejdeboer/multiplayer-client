@@ -1,6 +1,9 @@
+use std::sync::Arc;
+
 use iced::executor;
 use iced::{Application, Command, Element, Settings, Subscription, Theme};
 use multiplayer_client::configuration::{get_configuration, ClientSettings};
+use multiplayer_client::http::HttpClient;
 use multiplayer_client::view::{Chat, Login, View};
 use multiplayer_client::Message;
 
@@ -9,7 +12,7 @@ pub fn main() -> iced::Result {
 }
 
 struct Client {
-    settings: ClientSettings,
+    http_client: Arc<HttpClient>,
     current_view: Box<dyn View>,
 }
 
@@ -21,10 +24,11 @@ impl Application for Client {
 
     fn new(_flags: Self::Flags) -> (Self, Command<Message>) {
         let settings = get_configuration().expect("configuration should be retrieved");
+        let http_client = Arc::new(HttpClient::new(settings.server_url));
 
         let app = Self {
-            current_view: Box::new(Login::new(settings.clone())),
-            settings,
+            http_client,
+            current_view: Box::new(Login::new(http_client.clone())),
         };
 
         (app, Command::none())

@@ -1737,7 +1737,6 @@ dependencies = [
  "iced",
  "once_cell",
  "reqwest",
- "secrecy",
  "serde 1.0.197",
  "tokio",
  "wasm-bindgen",
@@ -2513,16 +2512,6 @@ dependencies = [
  "memmap2 0.9.4",
  "smithay-client-toolkit",
  "tiny-skia",
-]
-
-[[package]]
-name = "secrecy"
-version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9bd1c54ea06cfd2f6b63219704de0b9b4f72dcc2b8fdef820be6cd799780e91e"
-dependencies = [
- "serde 1.0.197",
- "zeroize",
 ]
 
 [[package]]

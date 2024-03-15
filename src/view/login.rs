@@ -1,7 +1,8 @@
 use core::panic;
+use std::sync::Arc;
 
-use crate::auth::login;
-use crate::configuration::ClientSettings;
+use crate::http::HttpClient;
+use crate::widget::error_message;
 use crate::Message;
 use iced::widget::{button, column, container, text, text_input};
 use iced::{Alignment, Command, Element, Length, Subscription};
@@ -9,33 +10,37 @@ use iced::{Alignment, Command, Element, Length, Subscription};
 use super::View;
 
 pub struct Login {
-    settings: ClientSettings,
+    http_client: Arc<HttpClient>,
     email: String,
     password: String,
+    error_message: Option<String>,
 }
 
 impl Login {
-    pub fn new(settings: ClientSettings) -> Self {
+    pub fn new(http_client: Arc<HttpClient>) -> Self {
         Self {
-            settings,
+            http_client,
             email: String::new(),
             password: String::new(),
+            error_message: None,
         }
     }
 }
 
 impl Login {
-    async fn handle_login(&self, email: &str, password: &str) -> Command<Message> {
-        Command::none()
+    fn handle_login(&mut self, email: String, password: String) -> Command<Message> {
+        let promise = self.http_client.clone().login(email, password);
+        Command::perform(promise, |login_response| match login_response {
+            Ok(()) => Message::GoToChat,
+            Err(_) => Message::GoToChat,
+        })
     }
 }
 
 impl View for Login {
     fn update(&mut self, message: Message) -> Command<Message> {
         match message {
-            Message::LoginSubmit(email, password) => {
-                Command::perform(self.handle_login(&email, &password), |_| ())
-            }
+            Message::LoginSubmit(email, password) => self.handle_login(email, password),
             _ => panic!("Unknown login message: {:?}", message),
         }
     }
@@ -50,9 +55,15 @@ impl View for Login {
             self.password.clone(),
         ));
 
-        container(
+        let form = if let Some(msg) = &self.error_message {
+            let error_message = error_message(msg.clone());
+            column![email_input, password_input, error_message, submit_button]
+        } else {
             column![email_input, password_input, submit_button]
-                .align_items(Alignment::Center)
+        };
+
+        container(
+            form.align_items(Alignment::Center)
                 .max_width(400)
                 .padding(10)
                 .spacing(20),
