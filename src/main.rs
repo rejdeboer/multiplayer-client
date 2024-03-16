@@ -1,9 +1,6 @@
-use std::sync::Arc;
-
 use iced::executor;
 use iced::{Application, Command, Element, Settings, Subscription, Theme};
 use multiplayer_client::configuration::{get_configuration, ClientSettings};
-use multiplayer_client::http::HttpClient;
 use multiplayer_client::view::{Chat, Login, View};
 use multiplayer_client::Message;
 
@@ -12,7 +9,7 @@ pub fn main() -> iced::Result {
 }
 
 struct Client {
-    http_client: Arc<HttpClient>,
+    settings: ClientSettings,
     current_view: Box<dyn View>,
 }
 
@@ -24,11 +21,10 @@ impl Application for Client {
 
     fn new(_flags: Self::Flags) -> (Self, Command<Message>) {
         let settings = get_configuration().expect("configuration should be retrieved");
-        let http_client = Arc::new(HttpClient::new(settings.server_url));
 
         let app = Self {
-            http_client,
-            current_view: Box::new(Login::new(http_client.clone())),
+            current_view: Box::new(Login::new(settings.clone())),
+            settings,
         };
 
         (app, Command::none())
@@ -44,8 +40,8 @@ impl Application for Client {
                 self.current_view = Box::new(Login::new(self.settings.clone()));
                 Command::none()
             }
-            Message::GoToChat => {
-                self.current_view = Box::new(Chat::new(self.settings.clone()));
+            Message::GoToChat(token) => {
+                self.current_view = Box::new(Chat::new(self.settings.clone(), token));
                 Command::none()
             }
             _ => self.current_view.update(message),

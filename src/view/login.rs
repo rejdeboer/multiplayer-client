@@ -1,25 +1,26 @@
 use core::panic;
-use std::sync::Arc;
 
+use crate::configuration::ClientSettings;
 use crate::http::HttpClient;
 use crate::widget::error_message;
 use crate::Message;
 use iced::widget::{button, column, container, text, text_input};
 use iced::{Alignment, Command, Element, Length, Subscription};
+use reqwest::StatusCode;
 
 use super::View;
 
 pub struct Login {
-    http_client: Arc<HttpClient>,
+    http_client: HttpClient,
     email: String,
     password: String,
     error_message: Option<String>,
 }
 
 impl Login {
-    pub fn new(http_client: Arc<HttpClient>) -> Self {
+    pub fn new(settings: ClientSettings) -> Self {
         Self {
-            http_client,
+            http_client: HttpClient::new(settings.server_url),
             email: String::new(),
             password: String::new(),
             error_message: None,
@@ -29,11 +30,14 @@ impl Login {
 
 impl Login {
     fn handle_login(&mut self, email: String, password: String) -> Command<Message> {
-        let promise = self.http_client.clone().login(email, password);
-        Command::perform(promise, |login_response| match login_response {
-            Ok(()) => Message::GoToChat,
-            Err(_) => Message::GoToChat,
-        })
+        let client = self.http_client.clone();
+        Command::perform(
+            async move { client.get_token(email, password).await },
+            |login_response| match login_response {
+                Ok(token) => Message::GoToChat(token),
+                Err(err) => handle_error(err),
+            },
+        )
     }
 }
 
@@ -78,4 +82,14 @@ impl View for Login {
     fn subscription(&self) -> Subscription<Message> {
         Subscription::none()
     }
+}
+
+fn handle_error(err: reqwest::Error) -> Message {
+    if let Some(status) = err.status() {
+        if status.lt(&StatusCode::INTERNAL_SERVER_ERROR) {
+            return Message::LoginError("Invalid username or password".to_string());
+        }
+    }
+
+    Message::LoginError("An unexpected error occured, please try again later".to_string())
 }

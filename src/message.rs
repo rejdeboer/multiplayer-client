@@ -5,10 +5,11 @@ pub enum Message {
     // Views
     GoToLogin,
     GoToSignup,
-    GoToChat,
+    GoToChat(String),
 
     // Login
     LoginSubmit(String, String),
+    LoginError(String),
 
     // Chat
     NewMessageChanged(String),

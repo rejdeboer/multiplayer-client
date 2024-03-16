@@ -1,11 +1,10 @@
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct HttpClient {
     client: Client,
-    base_url: String,
-    token: Option<String>,
+    pub base_url: String,
 }
 
 #[derive(Serialize)]
@@ -22,18 +21,14 @@ struct LoginResponse {
 impl HttpClient {
     pub fn new(base_url: String) -> Self {
         let client = Client::new();
-        Self {
-            client,
-            base_url,
-            token: None,
-        }
+        Self { client, base_url }
     }
 
-    pub fn get_token(&self) -> Option<String> {
-        self.token
-    }
-
-    pub async fn login(&mut self, email: String, password: String) -> Result<(), reqwest::Error> {
+    pub async fn get_token(
+        &self,
+        email: String,
+        password: String,
+    ) -> Result<String, reqwest::Error> {
         let url = format!("{}/token", self.base_url);
         let request_body = LoginBody { email, password };
 
@@ -47,8 +42,6 @@ impl HttpClient {
             .json::<LoginResponse>()
             .await?;
 
-        self.token = Some(login_response.token);
-
-        Ok(())
+        Ok(login_response.token)
     }
 }

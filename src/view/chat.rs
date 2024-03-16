@@ -11,19 +11,21 @@ use once_cell::sync::Lazy;
 use super::View;
 
 pub struct Chat {
+    settings: ClientSettings,
+    token: String,
     messages: Vec<websocket::Message>,
     new_message: String,
     state: State,
-    settings: ClientSettings,
 }
 
 impl Chat {
-    pub fn new(settings: ClientSettings) -> Self {
+    pub fn new(settings: ClientSettings, token: String) -> Self {
         Self {
+            settings,
+            token,
             messages: vec![],
             new_message: String::default(),
             state: State::default(),
-            settings,
         }
     }
 }
