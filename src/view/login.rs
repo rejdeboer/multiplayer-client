@@ -45,6 +45,10 @@ impl View for Login {
     fn update(&mut self, message: Message) -> Command<Message> {
         match message {
             Message::LoginSubmit(email, password) => self.handle_login(email, password),
+            Message::LoginError(err_msg) => {
+                self.error_message = Some(err_msg);
+                Command::none()
+            }
             _ => panic!("Unknown login message: {:?}", message),
         }
     }
