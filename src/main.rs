@@ -55,4 +55,8 @@ impl Application for Client {
     fn view(&self) -> Element<Message> {
         self.current_view.view()
     }
+
+    fn theme(&self) -> Self::Theme {
+        Theme::Dark
+    }
 }
