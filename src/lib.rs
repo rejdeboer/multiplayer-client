@@ -1,4 +1,5 @@
 pub mod configuration;
+pub mod domain;
 pub mod http;
 pub mod view;
 pub mod websocket;
