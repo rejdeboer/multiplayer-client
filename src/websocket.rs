@@ -41,7 +41,7 @@ pub fn connect(server_url: String, token: String) -> Subscription<Event> {
                             Ok((websocket, _)) => {
                                 let (sender, receiver) = mpsc::channel(100);
 
-                                let _ = output.send(Event::Connected(Connection(sender))).await;
+                                _ = output.send(Event::Connected(Connection(sender))).await;
 
                                 state = State::Connected(websocket, receiver);
                             }
@@ -49,7 +49,7 @@ pub fn connect(server_url: String, token: String) -> Subscription<Event> {
                                 tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
                                 println!("{}", err.to_string());
 
-                                let _ = output.send(Event::Disconnected).await;
+                                _ = output.send(Event::Disconnected).await;
                             }
                         }
                     }
@@ -60,10 +60,11 @@ pub fn connect(server_url: String, token: String) -> Subscription<Event> {
                             received = fused_websocket.select_next_some() => {
                                 match received {
                                     Ok(tungstenite::Message::Text(message)) => {
-                                       let _ = output.send(Event::MessageReceived(Message::User(message))).await;
+                                       _ = output.send(Event::MessageReceived(Message::User(message))).await;
                                     }
-                                    Err(_) => {
-                                        let _ = output.send(Event::Disconnected).await;
+                                    Err(err) => {
+                                        _ = output.send(Event::Disconnected).await;
+                                        println!("{}", err.to_string());
 
                                         state = State::Disconnected;
                                     }
@@ -75,7 +76,7 @@ pub fn connect(server_url: String, token: String) -> Subscription<Event> {
                                 let result = websocket.send(tungstenite::Message::Text(message.to_string())).await;
 
                                 if result.is_err() {
-                                    let _ = output.send(Event::Disconnected).await;
+                                    _ = output.send(Event::Disconnected).await;
 
                                     state = State::Disconnected;
                                 }
