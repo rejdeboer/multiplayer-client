@@ -124,7 +124,7 @@ impl View for Chat {
     }
 
     fn subscription(&self) -> Subscription<Message> {
-        websocket::connect(self.settings.server_url.clone()).map(Message::Event)
+        websocket::connect(self.settings.server_url.clone(), self.token.clone()).map(Message::Event)
     }
 }
 

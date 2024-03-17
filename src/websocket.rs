@@ -1,3 +1,4 @@
+use async_tungstenite::tungstenite::handshake::client::Request;
 use iced::futures;
 use iced::subscription::{self, Subscription};
 
@@ -6,9 +7,10 @@ use futures::sink::SinkExt;
 use futures::stream::StreamExt;
 
 use async_tungstenite::tungstenite;
+use rand::Rng;
 use std::fmt;
 
-pub fn connect(server_url: String) -> Subscription<Event> {
+pub fn connect(server_url: String, token: String) -> Subscription<Event> {
     struct Connect;
 
     subscription::channel(
@@ -20,8 +22,22 @@ pub fn connect(server_url: String) -> Subscription<Event> {
             loop {
                 match &mut state {
                     State::Disconnected => {
-                        let url = format!("{}/websocket", &server_url);
-                        match async_tungstenite::tokio::connect_async(&url).await {
+                        let url_str = &*format!("{}/websocket", &server_url.replace("http", "ws"));
+                        let url = url::Url::parse(url_str).unwrap();
+                        let host = url.host_str().expect("Host should be found in URL");
+                        let request = Request::builder()
+                            .method("GET")
+                            .uri(url_str)
+                            .header("Host", host)
+                            .header("Authorization", format!("Bearer {}", token))
+                            .header("Upgrade", "websocket")
+                            .header("Connection", "upgrade")
+                            .header("Sec-Websocket-Key", generate_websocket_key())
+                            .header("Sec-Websocket-Version", "13")
+                            .body(())
+                            .unwrap();
+
+                        match async_tungstenite::tokio::connect_async(request).await {
                             Ok((websocket, _)) => {
                                 let (sender, receiver) = mpsc::channel(100);
 
@@ -29,8 +45,9 @@ pub fn connect(server_url: String) -> Subscription<Event> {
 
                                 state = State::Connected(websocket, receiver);
                             }
-                            Err(_) => {
+                            Err(err) => {
                                 tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
+                                println!("{}", err.to_string());
 
                                 let _ = output.send(Event::Disconnected).await;
                             }
@@ -134,4 +151,11 @@ impl fmt::Display for Message {
             Message::User(message) => write!(f, "{message}"),
         }
     }
+}
+
+fn generate_websocket_key() -> String {
+    let mut rng = rand::thread_rng();
+    let mut random_bytes = [0u8; 16];
+    rng.fill(&mut random_bytes);
+    base64::encode(random_bytes)
 }
