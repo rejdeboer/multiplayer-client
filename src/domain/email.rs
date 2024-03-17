@@ -1,14 +1,14 @@
-use validator::validate_email;
+use validator::ValidateEmail;
 
 #[derive(Debug, Clone)]
 pub struct Email(String);
 
 impl Email {
     pub fn parse(s: String) -> Result<Email, String> {
-        if validate_email(&s) {
+        if ValidateEmail::validate_email(&s) {
             Ok(Self(s))
         } else {
-            Err(format!("{} is not a valid subscriber email.", s))
+            Err(format!("{} is not a valid email.", s))
         }
     }
 }
@@ -28,7 +28,6 @@ impl std::fmt::Display for Email {
 #[cfg(test)]
 mod tests {
     use super::Email;
-    use claim::assert_err;
     use fake::faker::internet::en::SafeEmail;
     use fake::Fake;
 
@@ -45,19 +44,19 @@ mod tests {
     #[test]
     fn empty_string_is_rejected() {
         let email = "".to_string();
-        assert_err!(Email::parse(email));
+        assert_eq!(Email::parse(email).is_err(), true);
     }
 
     #[test]
     fn email_missing_at_symbol_is_rejected() {
         let email = "rick.deboer.com".to_string();
-        assert_err!(Email::parse(email));
+        assert_eq!(Email::parse(email).is_err(), true);
     }
 
     #[test]
     fn email_missing_subject_is_rejected() {
         let email = "@live.nl".to_string();
-        assert_err!(Email::parse(email));
+        assert_eq!(Email::parse(email).is_err(), true);
     }
 
     #[quickcheck_macros::quickcheck]
