@@ -10,6 +10,16 @@ pub enum Message {
     // Login
     LoginSubmit(String, String),
     LoginError(String),
+    LoginEmailChanged(String),
+    LoginPasswordChanged(String),
+
+    // Signup
+    SignupSubmit(String, String, String, String),
+    SignupError(String),
+    SignupEmailChanged(String),
+    SignupUsernameChanged(String),
+    SignupPasswordChanged(String),
+    SignupPasswordConfirmChanged(String),
 
     // Chat
     NewMessageChanged(String),

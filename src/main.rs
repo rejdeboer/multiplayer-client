@@ -1,7 +1,7 @@
 use iced::executor;
 use iced::{Application, Command, Element, Settings, Subscription, Theme};
 use multiplayer_client::configuration::{get_configuration, ClientSettings};
-use multiplayer_client::view::{Chat, Login, View};
+use multiplayer_client::view::{Chat, Login, Signup, View};
 use multiplayer_client::Message;
 
 pub fn main() -> iced::Result {
@@ -38,6 +38,10 @@ impl Application for Client {
         match message {
             Message::GoToLogin => {
                 self.current_view = Box::new(Login::new(self.settings.clone()));
+                Command::none()
+            }
+            Message::GoToSignup => {
+                self.current_view = Box::new(Signup::new(self.settings.clone()));
                 Command::none()
             }
             Message::GoToChat(token) => {

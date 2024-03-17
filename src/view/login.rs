@@ -4,7 +4,7 @@ use crate::configuration::ClientSettings;
 use crate::http::HttpClient;
 use crate::widget::error_message;
 use crate::Message;
-use iced::widget::{button, column, container, text, text_input};
+use iced::widget::{button, column, container, row, text, text_input};
 use iced::{Alignment, Command, Element, Length, Subscription};
 use reqwest::StatusCode;
 
@@ -49,25 +49,38 @@ impl View for Login {
                 self.error_message = Some(err_msg);
                 Command::none()
             }
+            Message::LoginEmailChanged(email) => {
+                self.email = email;
+                Command::none()
+            }
+            Message::LoginPasswordChanged(password) => {
+                self.password = password;
+                Command::none()
+            }
             _ => panic!("Unknown login message: {:?}", message),
         }
     }
 
     fn view(&self) -> Element<'_, Message> {
-        let email_input = text_input("Email", &self.email);
+        let email_input = text_input("Email", &self.email).on_input(Message::LoginEmailChanged);
 
-        let password_input = text_input("Password", &self.password);
+        let password_input =
+            text_input("Password", &self.password).on_input(Message::LoginPasswordChanged);
 
         let submit_button = button(text("Submit")).on_press(Message::LoginSubmit(
             self.email.clone(),
             self.password.clone(),
         ));
 
+        let signup_button = button(text("Sign up")).on_press(Message::GoToSignup);
+
+        let buttons = row![submit_button, signup_button].spacing(10);
+
         let form = if let Some(msg) = &self.error_message {
             let error_message = error_message(msg.clone());
-            column![email_input, password_input, error_message, submit_button]
+            column![email_input, password_input, error_message, buttons]
         } else {
-            column![email_input, password_input, submit_button]
+            column![email_input, password_input, buttons]
         };
 
         container(

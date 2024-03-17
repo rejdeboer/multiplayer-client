@@ -64,11 +64,14 @@ impl HttpClient {
         username: String,
         password: String,
     ) -> Result<(), reqwest::Error> {
-        let url = format!("{}/token", self.base_url);
-        let request_body = SignupBody { email, username, password };
+        let url = format!("{}/user", self.base_url);
+        let request_body = SignupBody {
+            email,
+            username,
+            password,
+        };
 
-        let login_response = self
-            .client
+        self.client
             .post(url)
             .json(&request_body)
             .send()
