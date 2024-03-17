@@ -20,7 +20,8 @@ pub fn connect(server_url: String) -> Subscription<Event> {
             loop {
                 match &mut state {
                     State::Disconnected => {
-                        match async_tungstenite::tokio::connect_async(&server_url).await {
+                        let url = format!("{}/websocket", &server_url);
+                        match async_tungstenite::tokio::connect_async(&url).await {
                             Ok((websocket, _)) => {
                                 let (sender, receiver) = mpsc::channel(100);
 
