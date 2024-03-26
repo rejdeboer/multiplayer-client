@@ -1,4 +1,4 @@
-mod chat;
+mod editor;
 mod login;
 mod signup;
 
@@ -6,7 +6,7 @@ use iced::{Command, Element, Subscription};
 
 use crate::Message;
 
-pub use chat::*;
+pub use editor::*;
 pub use login::*;
 pub use signup::*;
 

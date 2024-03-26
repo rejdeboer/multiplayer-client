@@ -5,7 +5,7 @@ pub enum Message {
     // Views
     GoToLogin,
     GoToSignup,
-    GoToChat(String),
+    GoToEditor(String),
 
     // Login
     LoginSubmit(String, String),
@@ -21,8 +21,8 @@ pub enum Message {
     SignupPasswordChanged(String),
     SignupPasswordConfirmChanged(String),
 
-    // Chat
-    NewMessageChanged(String),
+    // Editor
+    ContentChanged(String),
     Send(websocket::Message),
     Event(websocket::Event),
 }

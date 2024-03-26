@@ -60,7 +60,7 @@ pub fn connect(server_url: String, token: String) -> Subscription<Event> {
                             received = fused_websocket.select_next_some() => {
                                 match received {
                                     Ok(tungstenite::Message::Text(message)) => {
-                                       _ = output.send(Event::MessageReceived(Message::ContentChanged(message))).await;
+                                       _ = output.send(Event::MessageReceived(Message::User(message))).await;
                                     }
                                     Err(err) => {
                                         _ = output.send(Event::Disconnected).await;
@@ -121,7 +121,7 @@ impl Connection {
 pub enum Message {
     Connected,
     Disconnected,
-    ContentChanged(String),
+    User(String),
 }
 
 impl Message {
@@ -129,7 +129,7 @@ impl Message {
         if message.is_empty() {
             None
         } else {
-            Some(Self::ContentChanged(message.to_string()))
+            Some(Self::User(message.to_string()))
         }
     }
 
@@ -149,7 +149,7 @@ impl fmt::Display for Message {
             Message::Disconnected => {
                 write!(f, "Connection lost... Retrying...")
             }
-            Message::ContentChanged(message) => write!(f, "{message}"),
+            Message::User(message) => write!(f, "{message}"),
         }
     }
 }

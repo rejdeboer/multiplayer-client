@@ -34,7 +34,7 @@ impl Login {
         Command::perform(
             async move { client.get_token(email, password).await },
             |login_response| match login_response {
-                Ok(token) => Message::GoToChat(token),
+                Ok(token) => Message::GoToEditor(token),
                 Err(err) => handle_error(err),
             },
         )
