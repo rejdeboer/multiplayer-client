@@ -1,12 +1,8 @@
 use core::panic;
 
 use crate::{configuration::ClientSettings, websocket, Message};
-use iced::{
-    alignment,
-    widget::{button, column, container, row, scrollable, text, text_editor, text_input},
-    Alignment, Color, Command, Element, Length, Subscription,
-};
-use once_cell::sync::Lazy;
+use iced::{widget::text_editor, Command, Element, Subscription};
+use yrs::{Doc, TextRef};
 
 use super::View;
 
@@ -14,16 +10,22 @@ pub struct Editor {
     settings: ClientSettings,
     token: String,
     content: text_editor::Content,
-    state: State,
+    connection: Option<websocket::Connection>,
+    document: Doc,
+    current_text: TextRef,
 }
 
 impl Editor {
     pub fn new(settings: ClientSettings, token: String) -> Self {
+        let doc = Doc::new();
+
         Self {
             settings,
             token,
             content: text_editor::Content::new(),
-            state: State::default(),
+            connection: None,
+            current_text: doc.get_or_insert_text("test"),
+            document: doc,
         }
     }
 }
@@ -40,20 +42,6 @@ impl View for Editor {
     }
 
     fn subscription(&self) -> Subscription<Message> {
-        websocket::connect(self.settings.server_url.clone(), self.token.clone())
-            .map(Message::ContentChanged)
+        websocket::connect(self.settings.server_url.clone(), self.token.clone()).map(Message::Event)
     }
 }
-
-enum State {
-    Disconnected,
-    Connected(websocket::Connection),
-}
-
-impl Default for State {
-    fn default() -> Self {
-        Self::Disconnected
-    }
-}
-
-static MESSAGE_LOG: Lazy<scrollable::Id> = Lazy::new(scrollable::Id::unique);
