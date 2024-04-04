@@ -8,7 +8,6 @@ use futures::stream::StreamExt;
 
 use async_tungstenite::tungstenite;
 use rand::Rng;
-use std::fmt;
 
 pub fn connect(server_url: String, token: String) -> Subscription<Event> {
     struct Connect;
@@ -59,8 +58,8 @@ pub fn connect(server_url: String, token: String) -> Subscription<Event> {
                         futures::select! {
                             received = fused_websocket.select_next_some() => {
                                 match received {
-                                    Ok(tungstenite::Message::Text(message)) => {
-                                       _ = output.send(Event::Update(message)).await;
+                                    Ok(tungstenite::Message::Binary(update)) => {
+                                       _ = output.send(Event::Update(update)).await;
                                     }
                                     Err(err) => {
                                         _ = output.send(Event::Disconnected).await;
@@ -72,8 +71,8 @@ pub fn connect(server_url: String, token: String) -> Subscription<Event> {
                                 }
                             }
 
-                            message = input.select_next_some() => {
-                                let result = websocket.send(tungstenite::Message::Text(message.to_string())).await;
+                            update = input.select_next_some() => {
+                                let result = websocket.send(tungstenite::Message::binary(update)).await;
 
                                 if result.is_err() {
                                     _ = output.send(Event::Disconnected).await;
@@ -95,7 +94,7 @@ enum State {
     Disconnected,
     Connected(
         async_tungstenite::WebSocketStream<async_tungstenite::tokio::ConnectStream>,
-        mpsc::Receiver<String>,
+        mpsc::Receiver<Vec<u8>>,
     ),
 }
 
@@ -103,16 +102,16 @@ enum State {
 pub enum Event {
     Connected(Connection),
     Disconnected,
-    Update(String),
+    Update(Vec<u8>),
 }
 
 #[derive(Debug, Clone)]
-pub struct Connection(mpsc::Sender<String>);
+pub struct Connection(mpsc::Sender<Vec<u8>>);
 
 impl Connection {
-    pub fn send(&mut self, message: String) {
+    pub fn send(&mut self, update: Vec<u8>) {
         self.0
-            .try_send(message)
+            .try_send(update)
             .expect("message should be sent to server");
     }
 }
