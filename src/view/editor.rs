@@ -28,11 +28,26 @@ impl Editor {
             document: doc,
         }
     }
+
+    fn handle_websocket_event(&mut self, event: websocket::Event) -> Command<Message> {
+        match event {
+            websocket::Event::Connected(cn) => {
+                self.connection = Some(cn);
+                Command::none()
+            }
+            websocket::Event::Disconnected => {
+                self.connection = None;
+                Command::none()
+            }
+            websocket::Event::Update(update) => Command::none(),
+        }
+    }
 }
 
 impl View for Editor {
     fn update(&mut self, message: Message) -> Command<Message> {
         match message {
+            Message::WebsocketEvent(event) => self.handle_websocket_event(event),
             _ => panic!("Unknown message for editor: {:?}", message),
         }
     }
@@ -42,6 +57,7 @@ impl View for Editor {
     }
 
     fn subscription(&self) -> Subscription<Message> {
-        websocket::connect(self.settings.server_url.clone(), self.token.clone()).map(Message::Event)
+        websocket::connect(self.settings.server_url.clone(), self.token.clone())
+            .map(Message::WebsocketEvent)
     }
 }

@@ -60,7 +60,7 @@ pub fn connect(server_url: String, token: String) -> Subscription<Event> {
                             received = fused_websocket.select_next_some() => {
                                 match received {
                                     Ok(tungstenite::Message::Text(message)) => {
-                                       _ = output.send(Event::MessageReceived(Message::ContentChanged(message))).await;
+                                       _ = output.send(Event::Update(message)).await;
                                     }
                                     Err(err) => {
                                         _ = output.send(Event::Disconnected).await;
@@ -95,7 +95,7 @@ enum State {
     Disconnected,
     Connected(
         async_tungstenite::WebSocketStream<async_tungstenite::tokio::ConnectStream>,
-        mpsc::Receiver<Message>,
+        mpsc::Receiver<String>,
     ),
 }
 
@@ -103,54 +103,17 @@ enum State {
 pub enum Event {
     Connected(Connection),
     Disconnected,
-    MessageReceived(Message),
+    Update(String),
 }
 
 #[derive(Debug, Clone)]
-pub struct Connection(mpsc::Sender<Message>);
+pub struct Connection(mpsc::Sender<String>);
 
 impl Connection {
-    pub fn send(&mut self, message: Message) {
+    pub fn send(&mut self, message: String) {
         self.0
             .try_send(message)
             .expect("message should be sent to server");
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum Message {
-    Connected,
-    Disconnected,
-    ContentChanged(String),
-}
-
-impl Message {
-    pub fn new(message: &str) -> Option<Self> {
-        if message.is_empty() {
-            None
-        } else {
-            Some(Self::ContentChanged(message.to_string()))
-        }
-    }
-
-    pub fn connected() -> Self {
-        Message::Connected
-    }
-
-    pub fn disconnected() -> Self {
-        Message::Disconnected
-    }
-}
-
-impl fmt::Display for Message {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Message::Connected => write!(f, "Connected successfully!"),
-            Message::Disconnected => {
-                write!(f, "Connection lost... Retrying...")
-            }
-            Message::ContentChanged(message) => write!(f, "{message}"),
-        }
     }
 }
 

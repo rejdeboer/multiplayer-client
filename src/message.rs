@@ -24,5 +24,5 @@ pub enum Message {
     // Editor
     ContentChanged(String),
     Send(websocket::Message),
-    Event(websocket::Event),
+    WebsocketEvent(websocket::Event),
 }
