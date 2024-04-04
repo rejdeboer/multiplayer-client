@@ -22,7 +22,7 @@ pub enum Message {
     SignupPasswordConfirmChanged(String),
 
     // Editor
-    ContentChanged(String),
-    Send(websocket::Message),
+    Send(String),
+    EditorAction(iced::widget::text_editor::Action),
     WebsocketEvent(websocket::Event),
 }

@@ -48,6 +48,10 @@ impl View for Editor {
     fn update(&mut self, message: Message) -> Command<Message> {
         match message {
             Message::WebsocketEvent(event) => self.handle_websocket_event(event),
+            Message::EditorAction(action) => {
+                self.content.perform(action);
+                Command::none()
+            }
             _ => panic!("Unknown message for editor: {:?}", message),
         }
     }
