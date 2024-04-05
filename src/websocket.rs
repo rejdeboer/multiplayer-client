@@ -22,21 +22,7 @@ pub fn connect(server_url: String, token: String) -> Subscription<Event> {
             loop {
                 match &mut state {
                     State::Disconnected => {
-                        let url_str = &*format!("{}/websocket", &server_url.replace("http", "ws"));
-                        let url = url::Url::parse(url_str).unwrap();
-                        let host = url.host_str().expect("Host should be found in URL");
-                        let request = Request::builder()
-                            .method("GET")
-                            .uri(url_str)
-                            .header("Host", host)
-                            .header("Authorization", format!("Bearer {}", token))
-                            .header("Upgrade", "websocket")
-                            .header("Connection", "upgrade")
-                            .header("Sec-Websocket-Key", generate_websocket_key())
-                            .header("Sec-Websocket-Version", "13")
-                            .body(())
-                            .unwrap();
-
+                        let request = create_connection_request(&server_url, &token);
                         match async_tungstenite::tokio::connect_async(request).await {
                             Ok((websocket, _)) => {
                                 let (sender, receiver) = mpsc::channel(100);
@@ -113,6 +99,24 @@ impl Connection {
             .try_send(update)
             .expect("message should be sent to server");
     }
+}
+
+fn create_connection_request(server_url: &str, token: &str) -> Request {
+    let url_str = &*format!("{}/websocket", &server_url.replace("http", "ws"));
+    let url = url::Url::parse(url_str).unwrap();
+    let host = url.host_str().expect("Host should be found in URL");
+
+    Request::builder()
+        .method("GET")
+        .uri(url_str)
+        .header("Host", host)
+        .header("Authorization", format!("Bearer {}", token))
+        .header("Upgrade", "websocket")
+        .header("Connection", "upgrade")
+        .header("Sec-Websocket-Key", generate_websocket_key())
+        .header("Sec-Websocket-Version", "13")
+        .body(())
+        .unwrap()
 }
 
 fn generate_websocket_key() -> String {
