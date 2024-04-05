@@ -5,6 +5,9 @@ use multiplayer_client::view::{Editor, Login, Signup, View};
 use multiplayer_client::Message;
 
 pub fn main() -> iced::Result {
+    #[cfg(not(target_arch = "wasm32"))]
+    tracing_subscriber::fmt::init();
+
     Client::run(Settings::default())
 }
 

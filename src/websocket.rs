@@ -16,6 +16,7 @@ pub fn connect(server_url: String, token: String) -> Subscription<Event> {
         std::any::TypeId::of::<Connect>(),
         100,
         |mut output| async move {
+            _ = tracing::info_span!("WS loop").entered();
             let mut state = State::Disconnected;
 
             loop {
@@ -45,9 +46,8 @@ pub fn connect(server_url: String, token: String) -> Subscription<Event> {
                                 state = State::Connected(websocket, receiver);
                             }
                             Err(err) => {
+                                tracing::error!("error connecting to server: {}", err);
                                 tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
-                                println!("{}", err.to_string());
-
                                 _ = output.send(Event::Disconnected).await;
                             }
                         }
@@ -62,9 +62,8 @@ pub fn connect(server_url: String, token: String) -> Subscription<Event> {
                                        _ = output.send(Event::Update(update)).await;
                                     }
                                     Err(err) => {
+                                        tracing::error!("error receiving message: {}", err);
                                         _ = output.send(Event::Disconnected).await;
-                                        println!("{}", err.to_string());
-
                                         state = State::Disconnected;
                                     }
                                     Ok(_) => continue,

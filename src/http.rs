@@ -37,6 +37,7 @@ impl HttpClient {
         Self { client, base_url }
     }
 
+    #[tracing::instrument(name = "Get JWT token")]
     pub async fn get_token(
         &self,
         email: String,
@@ -58,6 +59,7 @@ impl HttpClient {
         Ok(login_response.token)
     }
 
+    #[tracing::instrument(name = "Create new user")]
     pub async fn create_user(
         &self,
         email: String,
