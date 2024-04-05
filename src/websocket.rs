@@ -45,14 +45,16 @@ pub fn connect(server_url: String, token: String) -> Subscription<Event> {
                             received = fused_websocket.select_next_some() => {
                                 match received {
                                     Ok(tungstenite::Message::Binary(update)) => {
-                                       _ = output.send(Event::Update(update)).await;
+                                        _ = output.send(Event::Update(update)).await;
                                     }
                                     Err(err) => {
                                         tracing::error!("error receiving message: {}", err);
                                         _ = output.send(Event::Disconnected).await;
                                         state = State::Disconnected;
                                     }
-                                    Ok(_) => continue,
+                                    Ok(response) => {
+                                        tracing::warn!("unhandled message: {:?}", response);
+                                    },
                                 }
                             }
 
