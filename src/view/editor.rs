@@ -112,15 +112,15 @@ impl View for Editor {
 }
 
 fn get_cursor_index(content: &text_editor::Content) -> usize {
-    let (x, y) = content.cursor_position();
+    let (line, column) = content.cursor_position();
 
-    if y == 0 {
-        return x;
+    if line == 0 {
+        return column;
     }
 
     content
         .lines()
-        .take(y - 1)
+        .take(line - 1)
         .fold(0, |count, line| count + line.len())
-        + x
+        + column
 }
