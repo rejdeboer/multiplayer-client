@@ -1,9 +1,20 @@
 use core::panic;
-use std::borrow::BorrowMut;
+use std::{
+    borrow::BorrowMut,
+    cell::RefCell,
+    sync::{
+        mpsc::{self, Receiver},
+        Arc, Mutex,
+    },
+};
 
 use crate::{configuration::ClientSettings, websocket, Message};
 use iced::{widget::text_editor, Command, Element, Length, Subscription};
-use yrs::{updates::decoder::Decode, Doc, Text, TextRef, Transact, Update};
+use yrs::{
+    types::{text::TextEvent, Delta},
+    updates::decoder::Decode,
+    Doc, GetString, Map, Observable, Text, TextRef, Transact, TransactionMut, Update,
+};
 
 use super::View;
 
@@ -14,19 +25,33 @@ pub struct Editor {
     connection: Option<websocket::Connection>,
     document: Doc,
     current_text: TextRef,
+    delta_receiver: RefCell<Option<Receiver<Vec<Delta>>>>,
+    _sub: yrs::Subscription,
 }
 
 impl Editor {
     pub fn new(settings: ClientSettings, token: String) -> Self {
         let doc = Doc::new();
+        let folder = doc.get_or_insert_map("root");
+
+        let text = doc.get_or_insert_text("test");
+        let content = text_editor::Content::new();
+
+        let (sender, receiver) = mpsc::channel::<Vec<Delta>>();
+
+        let _sub = text.observe(move |txn, event| {
+            _ = sender.send(event.delta(txn).to_vec());
+        });
 
         Self {
             settings,
             token,
-            content: text_editor::Content::new(),
+            content,
             connection: None,
-            current_text: doc.get_or_insert_text("test"),
+            current_text: text,
             document: doc,
+            delta_receiver: RefCell::new(Some(receiver)),
+            _sub,
         }
     }
 
@@ -94,6 +119,26 @@ impl View for Editor {
 
                 Command::none()
             }
+            Message::EditorSync(delta) => {
+                let mut index: usize = 0;
+
+                delta.iter().for_each(|op| match op {
+                    Delta::Retain(range, _) => {
+                        index += range.clone() as usize;
+                    }
+                    Delta::Inserted(yrs::Value::YText(t_ref), _) => {
+                        let value = t_ref.get_string(&self.document.transact());
+
+                        index += value.len();
+                    }
+                    Delta::Deleted(range) => {
+                        let cursor_index = get_cursor_index(&self.content);
+                    }
+                    _ => tracing::warn!("unsupported text operation: {:?}", op),
+                });
+
+                Command::none()
+            }
             _ => panic!("Unknown message for editor: {:?}", message),
         }
     }
@@ -106,8 +151,14 @@ impl View for Editor {
     }
 
     fn subscription(&self) -> Subscription<Message> {
-        websocket::connect(self.settings.server_url.clone(), self.token.clone())
-            .map(Message::WebsocketEvent)
+        let mut subscriptions: Vec<Subscription<Message>> = vec![];
+
+        subscriptions.push(
+            websocket::connect(self.settings.server_url.clone(), self.token.clone())
+                .map(Message::WebsocketEvent),
+        );
+
+        Subscription::batch(subscriptions)
     }
 }
 

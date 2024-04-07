@@ -24,5 +24,6 @@ pub enum Message {
     // Editor
     Send(String),
     EditorAction(iced::widget::text_editor::Action),
+    EditorSync(Vec<yrs::types::Delta>),
     WebsocketEvent(websocket::Event),
 }
