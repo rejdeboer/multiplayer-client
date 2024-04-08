@@ -1,19 +1,15 @@
 use core::panic;
-use std::{
-    borrow::BorrowMut,
-    cell::RefCell,
-    sync::{
-        mpsc::{self, Receiver},
-        Arc, Mutex,
-    },
-};
+use std::borrow::BorrowMut;
 
 use crate::{configuration::ClientSettings, websocket, Message};
-use iced::{widget::text_editor, Command, Element, Length, Subscription};
+use iced::{
+    widget::{button, column, container, row, text, text_editor, text_input},
+    Command, Element, Length, Subscription,
+};
+use iced_aw::modal;
 use yrs::{
-    types::{text::TextEvent, Delta},
-    updates::decoder::Decode,
-    Doc, GetString, Map, Observable, Text, TextRef, Transact, TransactionMut, Update,
+    types::Delta, updates::decoder::Decode, Doc, GetString, Map, Observable, Text, TextRef,
+    Transact, Update,
 };
 
 use super::View;
@@ -21,12 +17,12 @@ use super::View;
 pub struct Editor {
     settings: ClientSettings,
     token: String,
+    show_modal: bool,
+    new_file_name: String,
     content: text_editor::Content,
     connection: Option<websocket::Connection>,
     document: Doc,
     current_text: TextRef,
-    delta_receiver: RefCell<Option<Receiver<Vec<Delta>>>>,
-    _sub: yrs::Subscription,
 }
 
 impl Editor {
@@ -37,21 +33,21 @@ impl Editor {
         let text = doc.get_or_insert_text("test");
         let content = text_editor::Content::new();
 
-        let (sender, receiver) = mpsc::channel::<Vec<Delta>>();
-
-        let _sub = text.observe(move |txn, event| {
-            _ = sender.send(event.delta(txn).to_vec());
-        });
+        // let (sender, receiver) = mpsc::channel::<Vec<Delta>>();
+        //
+        // let _sub = text.observe(move |txn, event| {
+        //     _ = sender.send(event.delta(txn).to_vec());
+        // });
 
         Self {
             settings,
             token,
             content,
+            show_modal: false,
+            new_file_name: String::new(),
             connection: None,
             current_text: text,
             document: doc,
-            delta_receiver: RefCell::new(Some(receiver)),
-            _sub,
         }
     }
 
@@ -139,15 +135,51 @@ impl View for Editor {
 
                 Command::none()
             }
+            Message::EditorToggleModal => {
+                self.show_modal = !self.show_modal;
+                Command::none()
+            }
+            Message::EditorNewFileNameChanged(name) => {
+                self.new_file_name = name;
+                Command::none()
+            }
+            Message::EditorCreateFile => {
+                let folder = self.document.get_or_insert_map("root");
+                let mut txn = self.document.transact_mut();
+
+                if !folder.contains_key(&mut txn, &self.new_file_name) {
+                    folder.insert(&mut txn, self.new_file_name.clone(), String::new());
+                }
+                self.new_file_name.clear();
+
+                Command::perform(async {}, |()| Message::EditorToggleModal)
+            }
             _ => panic!("Unknown message for editor: {:?}", message),
         }
     }
 
     fn view(&self) -> Element<'_, Message> {
-        text_editor(&self.content)
+        let add_file_button = button(text("Add file")).on_press(Message::EditorToggleModal);
+
+        let top_bar = row![add_file_button];
+
+        let editor = text_editor(&self.content)
             .on_action(Message::EditorAction)
-            .height(Length::Fill)
-            .into()
+            .height(Length::Fill);
+
+        let view = column![top_bar, editor];
+
+        if !self.show_modal {
+            return view.into();
+        }
+
+        let file_name_input = text_input("File name", &self.new_file_name)
+            .on_input(Message::EditorNewFileNameChanged)
+            .on_submit(Message::EditorCreateFile);
+
+        let overlay = container(file_name_input).padding([10, 20]);
+
+        modal(view, Some(overlay)).into()
     }
 
     fn subscription(&self) -> Subscription<Message> {

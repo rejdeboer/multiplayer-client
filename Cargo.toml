@@ -9,6 +9,7 @@ publish = false
 async-tungstenite = { version = "0.25", features = ["tokio-rustls-webpki-roots"] }
 config = "0.11"
 iced = { version = "0.12", features = ["debug", "wgpu", "webgl", "tokio"] }
+iced_aw = { version = "0.8", features = ["modal"] }
 once_cell = "1.19"
 rand = "0.8"
 base64 = "0.12"
