@@ -8,8 +8,7 @@ use iced::{
 };
 use iced_aw::modal;
 use yrs::{
-    types::Delta, updates::decoder::Decode, Doc, GetString, Map, Observable, Text, TextRef,
-    Transact, Update,
+    types::Delta, updates::decoder::Decode, Doc, GetString, Map, Text, TextRef, Transact, Update,
 };
 
 use super::View;
