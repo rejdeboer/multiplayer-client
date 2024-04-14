@@ -1,4 +1,5 @@
 mod editor;
+mod home;
 mod login;
 mod signup;
 
@@ -7,6 +8,7 @@ use iced::{Command, Element, Subscription};
 use crate::Message;
 
 pub use editor::*;
+pub use home::*;
 pub use login::*;
 pub use signup::*;
 
