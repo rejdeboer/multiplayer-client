@@ -3,7 +3,7 @@ use core::panic;
 use iced::widget::{column, text_editor};
 use iced::{executor, Length};
 use iced::{Application, Command, Element, Settings, Subscription, Theme};
-use wasm::Message;
+use multiplayer_client::Message;
 
 pub fn main() -> iced::Result {
     #[cfg(not(target_arch = "wasm32"))]

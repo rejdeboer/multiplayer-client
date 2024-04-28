@@ -1,5 +1,5 @@
 [package]
-name = "wasm"
+name = "multiplayer-client"
 version = "0.1.0"
 authors = ["Rick de Boer <rick.deboer@live.nl>"]
 edition = "2021"

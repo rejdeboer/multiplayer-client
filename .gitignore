@@ -1,3 +1,8 @@
+# RUST
 target
 *.wasm
-*.js
+
+# FRONTEND
+node_modules
+dist
+.next
