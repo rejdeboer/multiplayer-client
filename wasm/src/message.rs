@@ -1,5 +1,3 @@
-use crate::websocket;
-
 #[derive(Debug, Clone)]
 pub enum Message {
     // Views
@@ -27,5 +25,5 @@ pub enum Message {
     EditorToggleModal,
     EditorNewFileNameChanged(String),
     EditorCreateFile,
-    WebsocketEvent(websocket::Event),
+    // WebsocketEvent(websocket::Event),
 }
