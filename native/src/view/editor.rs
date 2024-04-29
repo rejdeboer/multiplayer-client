@@ -14,7 +14,14 @@ use yrs::{
 use super::View;
 
 pub struct Editor {
+    settings: ClientSettings,
+    token: String,
+    show_modal: bool,
+    new_file_name: String,
     content: text_editor::Content,
+    connection: Option<websocket::Connection>,
+    document: Doc,
+    current_text: TextRef,
 }
 
 impl Editor {

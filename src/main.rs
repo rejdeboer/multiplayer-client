@@ -1,7 +1,8 @@
-use iced::executor;
+use core::panic;
+
+use iced::widget::{column, text_editor};
+use iced::{executor, Length};
 use iced::{Application, Command, Element, Settings, Subscription, Theme};
-use multiplayer_client::configuration::{get_configuration, ClientSettings};
-use multiplayer_client::view::{Editor, Login, Signup, View};
 use multiplayer_client::Message;
 
 pub fn main() -> iced::Result {
@@ -12,8 +13,7 @@ pub fn main() -> iced::Result {
 }
 
 struct Client {
-    settings: ClientSettings,
-    current_view: Box<dyn View>,
+    content: text_editor::Content,
 }
 
 impl Application for Client {
@@ -23,11 +23,8 @@ impl Application for Client {
     type Executor = executor::Default;
 
     fn new(_flags: Self::Flags) -> (Self, Command<Message>) {
-        let settings = get_configuration().expect("configuration should be retrieved");
-
         let app = Self {
-            current_view: Box::new(Login::new(settings.clone())),
-            settings,
+            content: text_editor::Content::new(),
         };
 
         (app, Command::none())
@@ -39,28 +36,26 @@ impl Application for Client {
 
     fn update(&mut self, message: Message) -> Command<Message> {
         match message {
-            Message::GoToLogin => {
-                self.current_view = Box::new(Login::new(self.settings.clone()));
+            Message::EditorAction(action) => {
+                self.content.perform(action);
                 Command::none()
             }
-            Message::GoToSignup => {
-                self.current_view = Box::new(Signup::new(self.settings.clone()));
-                Command::none()
-            }
-            Message::GoToEditor(token) => {
-                self.current_view = Box::new(Editor::new(self.settings.clone(), token));
-                Command::none()
-            }
-            _ => self.current_view.update(message),
+            _ => panic!("Unknown message"),
         }
     }
 
     fn subscription(&self) -> Subscription<Message> {
-        self.current_view.subscription()
+        Subscription::none()
     }
 
     fn view(&self) -> Element<Message> {
-        self.current_view.view()
+        let editor = text_editor(&self.content)
+            .on_action(Message::EditorAction)
+            .height(Length::Fill);
+
+        let view = column![editor];
+
+        view.into()
     }
 
     fn theme(&self) -> Self::Theme {
