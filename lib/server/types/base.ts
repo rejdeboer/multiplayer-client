@@ -1,4 +1,4 @@
-export type ResourceType = "custom_channel_messages";
+export type ResourceType = "user";
 
 export type Resource = {};
 export type ResourceCreate = {};
