@@ -1,4 +1,3 @@
-use async_tungstenite::tungstenite::handshake::client::Request;
 use iced::futures;
 use iced::subscription::{self, Subscription};
 
@@ -6,7 +5,6 @@ use futures::channel::mpsc;
 use futures::sink::SinkExt;
 use futures::stream::StreamExt;
 
-use async_tungstenite::tungstenite;
 use rand::Rng;
 
 pub fn connect(server_url: String, token: String) -> Subscription<Event> {
@@ -22,14 +20,15 @@ pub fn connect(server_url: String, token: String) -> Subscription<Event> {
             loop {
                 match &mut state {
                     State::Disconnected => {
-                        let request = create_connection_request(&server_url, &token);
-                        match async_tungstenite::tokio::connect_async(request).await {
-                            Ok((websocket, _)) => {
+                        // TODO: use document ID in URL
+                        let url = format!("{}/sync/{}?{}", server_url, "".to_string(), token);
+                        match ws_stream_wasm::WsMeta::connect(url, None).await {
+                            Ok((_, stream)) => {
                                 let (sender, receiver) = mpsc::channel(100);
 
                                 _ = output.send(Event::Connected(Connection(sender))).await;
 
-                                state = State::Connected(websocket, receiver);
+                                state = State::Connected(stream, receiver);
                             }
                             Err(err) => {
                                 tracing::error!("error connecting to server: {}", err);
@@ -38,28 +37,23 @@ pub fn connect(server_url: String, token: String) -> Subscription<Event> {
                             }
                         }
                     }
-                    State::Connected(websocket, input) => {
-                        let mut fused_websocket = websocket.by_ref().fuse();
+                    State::Connected(stream, input) => {
+                        let mut fused_websocket = stream.by_ref().fuse();
 
                         futures::select! {
                             received = fused_websocket.select_next_some() => {
                                 match received {
-                                    Ok(tungstenite::Message::Binary(update)) => {
+                                   ws_stream_wasm::WsMessage::Binary(update) => {
                                         _ = output.send(Event::Update(update)).await;
                                     }
-                                    Err(err) => {
-                                        tracing::error!("error receiving message: {}", err);
-                                        _ = output.send(Event::Disconnected).await;
-                                        state = State::Disconnected;
-                                    }
-                                    Ok(response) => {
+                                    response => {
                                         tracing::warn!("unhandled message: {:?}", response);
                                     },
                                 }
                             }
 
                             update = input.select_next_some() => {
-                                let result = websocket.send(tungstenite::Message::binary(update)).await;
+                                let result = stream.send(ws_stream_wasm::WsMessage::Binary(update)).await;
 
                                 if result.is_err() {
                                     _ = output.send(Event::Disconnected).await;
@@ -79,10 +73,7 @@ pub fn connect(server_url: String, token: String) -> Subscription<Event> {
 #[allow(clippy::large_enum_variant)]
 enum State {
     Disconnected,
-    Connected(
-        async_tungstenite::WebSocketStream<async_tungstenite::tokio::ConnectStream>,
-        mpsc::Receiver<Vec<u8>>,
-    ),
+    Connected(ws_stream_wasm::WsStream, mpsc::Receiver<Vec<u8>>),
 }
 
 #[derive(Debug, Clone)]
@@ -101,24 +92,6 @@ impl Connection {
             .try_send(update)
             .expect("message should be sent to server");
     }
-}
-
-fn create_connection_request(server_url: &str, token: &str) -> Request {
-    let url_str = &*format!("{}/websocket", &server_url.replace("http", "ws"));
-    let url = url::Url::parse(url_str).unwrap();
-    let host = url.host_str().expect("Host should be found in URL");
-
-    Request::builder()
-        .method("GET")
-        .uri(url_str)
-        .header("Host", host)
-        .header("Authorization", format!("Bearer {}", token))
-        .header("Upgrade", "websocket")
-        .header("Connection", "upgrade")
-        .header("Sec-Websocket-Key", generate_websocket_key())
-        .header("Sec-Websocket-Version", "13")
-        .body(())
-        .unwrap()
 }
 
 fn generate_websocket_key() -> String {

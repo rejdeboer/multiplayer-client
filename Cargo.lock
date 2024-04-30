@@ -254,6 +254,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "79296716171880943b8470b5f8d03aa55eb2e645a4874bdbb28adb49162e012c"
 
 [[package]]
+name = "by_address"
+version = "1.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "64fa3c856b712db6612c019f14756e64e4bcea13337a6b33b696333a9eaa2d06"
+
+[[package]]
 name = "bytemuck"
 version = "1.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -656,6 +662,35 @@ checksum = "2d09ff881f92f118b11105ba5e34ff8f4adf27b30dae8f12e28c193af1c83176"
 dependencies = [
  "libc",
  "linux-raw-sys 0.6.4",
+]
+
+[[package]]
+name = "editor"
+version = "0.1.0"
+dependencies = [
+ "base64 0.12.3",
+ "console_error_panic_hook",
+ "console_log",
+ "fake",
+ "iced",
+ "once_cell",
+ "quickcheck",
+ "quickcheck_macros",
+ "rand 0.8.5",
+ "reqwest",
+ "serde",
+ "tokio",
+ "tracing",
+ "tracing-log",
+ "tracing-subscriber",
+ "url",
+ "validator",
+ "wasm-bindgen",
+ "web-sys",
+ "wgpu",
+ "winit",
+ "ws_stream_wasm",
+ "yrs",
 ]
 
 [[package]]
@@ -1108,9 +1143,9 @@ dependencies = [
 
 [[package]]
 name = "hashbrown"
-version = "0.14.3"
+version = "0.14.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "290f1a1d9242c78d09ce40a5e87e7554ee637af1351968159f4952f028f75604"
+checksum = "e5274423e17b7c9fc20b6e7e208532f9b19825d82dfd615708b70edd83df41f1"
 dependencies = [
  "ahash",
  "allocator-api2",
@@ -1666,35 +1701,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "multiplayer-client"
-version = "0.1.0"
-dependencies = [
- "base64 0.12.3",
- "console_error_panic_hook",
- "console_log",
- "fake",
- "iced",
- "once_cell",
- "quickcheck",
- "quickcheck_macros",
- "rand 0.8.5",
- "reqwest",
- "serde",
- "tokio",
- "tracing",
- "tracing-log",
- "tracing-subscriber",
- "url",
- "validator",
- "wasm-bindgen",
- "web-sys",
- "wgpu",
- "winit",
- "ws_stream_wasm",
- "yrs",
-]
-
-[[package]]
 name = "naga"
 version = "0.19.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1896,9 +1902,9 @@ dependencies = [
 
 [[package]]
 name = "palette"
-version = "0.7.5"
+version = "0.7.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ebfc23a4b76642983d57e4ad00bb4504eb30a8ce3c70f4aee1f725610e36d97a"
+checksum = "4cbf71184cc5ecc2e4e1baccdb21026c20e5fc3dcf63028a086131b3ab00b6e6"
 dependencies = [
  "approx",
  "fast-srgb8",
@@ -1908,10 +1914,11 @@ dependencies = [
 
 [[package]]
 name = "palette_derive"
-version = "0.7.5"
+version = "0.7.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e8890702dbec0bad9116041ae586f84805b13eecd1d8b1df27c29998a9969d6d"
+checksum = "f5030daf005bface118c096f510ffb781fc28f9ab6a32ab224d8631be6851d30"
 dependencies = [
+ "by_address",
  "proc-macro2",
  "quote",
  "syn 2.0.60",
