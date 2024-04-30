@@ -1,10 +1,9 @@
 'use client'
 
-import type { HTMLInputTypeAttribute } from "react";
 import clsx from "clsx";
 
 type InputTypeAttribute = Extract<
-	HTMLInputTypeAttribute,
+	React.HTMLInputTypeAttribute,
 	"text" | "email" | "search" | "url" | "tel" | "password"
 >;
 

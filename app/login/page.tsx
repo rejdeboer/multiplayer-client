@@ -1,4 +1,4 @@
-import { Input } from "@/components";
+import { Button, Input } from "@/components";
 
 export default function Login() {
   return (
@@ -51,12 +51,12 @@ export default function Login() {
           </div>
 
           <div>
-            <button
+            <Button
               type="submit"
-              className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+              className="flex w-full justify-center "
             >
               Sign in
-            </button>
+            </Button>
           </div>
         </form>
 
