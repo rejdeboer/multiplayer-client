@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "./scripts/wasm-bind.sh && next dev",
-    "build": "./scripts/wasm-bind.sh && next build",
-    "start": "./scripts/wasm-bind.sh && next start",
+    "dev": "./editor/wasm-bind.sh && next dev",
+    "build": "./editor/wasm-bind.sh && next build",
+    "start": "./editor/wasm-bind.sh && next start",
     "lint": "next lint"
   },
   "dependencies": {
