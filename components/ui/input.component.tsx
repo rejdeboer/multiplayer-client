@@ -1,6 +1,6 @@
 'use client'
 
-import { HTMLInputTypeAttribute } from "react";
+import type { HTMLInputTypeAttribute } from "react";
 import clsx from "clsx";
 
 type InputTypeAttribute = Extract<
