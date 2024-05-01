@@ -2,6 +2,8 @@
 
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { Button, Input } from "../ui";
+import { useLogin } from "@/hooks";
+import type { AxiosError } from "axios";
 
 type Inputs = {
 	email: string,
@@ -9,12 +11,19 @@ type Inputs = {
 }
 
 export function LoginForm() {
+	const login = useLogin()
 	const {
 		register,
 		handleSubmit,
+		setError,
 		// formState: { errors },
 	} = useForm<Inputs>()
-	const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
+	const onSubmit: SubmitHandler<Inputs> = (data) => {
+		login(data.email, data.password)
+			.catch((e: AxiosError) => setError("root.serverError", {
+				message: e.message,
+			}))
+	}
 
 	return (
 		<form className="space-y-6" action="#" method="POST" onSubmit={handleSubmit(onSubmit)} >
