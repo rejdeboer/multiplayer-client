@@ -1,4 +1,4 @@
-import { Button, Input } from "@/components";
+import { LoginForm } from "@/components";
 
 export default function Login() {
   return (
@@ -10,55 +10,7 @@ export default function Login() {
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form className="space-y-6" action="#" method="POST">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium leading-6 text-white">
-              Email address
-            </label>
-            <div className="mt-2">
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="block w-full"
-              />
-            </div>
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between">
-              <label htmlFor="password" className="block text-sm font-medium leading-6 text-white">
-                Password
-              </label>
-              <div className="text-sm">
-                <a href="#" className="font-semibold text-indigo-400 hover:text-indigo-300">
-                  Forgot password?
-                </a>
-              </div>
-            </div>
-            <div className="mt-2">
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                className="block w-full"
-              />
-            </div>
-          </div>
-
-          <div>
-            <Button
-              type="submit"
-              className="flex w-full justify-center "
-            >
-              Sign in
-            </Button>
-          </div>
-        </form>
+        <LoginForm />
 
         <p className="mt-10 text-center text-sm text-gray-400">
           Not a member?{' '}
