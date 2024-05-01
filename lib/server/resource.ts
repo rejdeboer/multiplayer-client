@@ -1,6 +1,7 @@
 import { ApiClient } from "./client";
 import type { InterceptorManager } from "./interceptor";
-import type { Resource, ResourceCreate } from "./types";
+import { AccessToken } from "./store";
+import type { Credentials, Resource, ResourceCreate } from "./types";
 
 export type QueryParams = {};
 
@@ -21,5 +22,13 @@ export class ResourceAdapter {
     params?: QueryParams,
   ): Promise<R> {
     return this.client.request("POST", path, data, params);
+  }
+
+  async authenticate(credentials: Credentials): Promise<AccessToken> {
+    const token = await this.post<Credentials, AccessToken>("/token", credentials)
+
+    this.client.setToken(token);
+
+    return token
   }
 }

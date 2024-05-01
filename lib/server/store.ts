@@ -1,7 +1,7 @@
 const TOKEN_KEY = "access-token";
 
 export type AccessToken = {
-  token: string,
+  jwt: string,
 }
 
 export function getLocalToken(): AccessToken | undefined {
@@ -12,10 +12,10 @@ export function getLocalToken(): AccessToken | undefined {
   }
 
   return {
-    token,
+    jwt: token,
   }
 }
 
 export function storeToken(token: AccessToken) {
-  localStorage.setItem(TOKEN_KEY, token.token);
+  localStorage.setItem(TOKEN_KEY, token.jwt);
 }

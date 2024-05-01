@@ -8,6 +8,7 @@ import type {
 } from "./interceptor";
 import { ResourceAdapter } from "./resource";
 import * as api from "./resources";
+import { AccessToken } from "./store";
 
 export class ServerClient {
   private readonly adapter: ResourceAdapter;
@@ -18,6 +19,13 @@ export class ServerClient {
     this.adapter = new ResourceAdapter(baseUrl);
 
     this.users = new api.Users(this.adapter);
+  }
+
+  async authenticate(
+    email: string,
+    password: string,
+  ): Promise<AccessToken> {
+    return await this.adapter.authenticate({ email, password });
   }
 
   addRequestInterceptor(
