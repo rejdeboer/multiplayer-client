@@ -1,4 +1,6 @@
-import { PUBLIC_CONFIG, Server, setAccessToken } from "@/lib";
+import { setAccessToken } from "@/lib/auth/set-access-token";
+import { PUBLIC_CONFIG } from "@/lib/config";
+import { Server } from "@/lib/server-client";
 import { useCallback } from "react";
 
 export function useLogin(): (email: string, password: string) => Promise<void> {

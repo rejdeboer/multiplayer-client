@@ -1,6 +1,5 @@
 import { cookies } from "next/headers"
-
-const TOKEN_KEY = "access-token";
+import { TOKEN_KEY } from "./token-key.constant"
 
 export function getAccessToken(): string | undefined {
 	// If we call this from the browser
@@ -12,11 +11,3 @@ export function getAccessToken(): string | undefined {
 	return store.get(TOKEN_KEY)?.value
 }
 
-export function setAccessToken(token: string, expiresIn: number): void {
-	const store = cookies()
-	store.set(TOKEN_KEY, token, {
-		// Set grace period of 5 seconds for request latency
-		maxAge: expiresIn - 5,
-		httpOnly: true,
-	})
-}

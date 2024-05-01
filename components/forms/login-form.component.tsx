@@ -17,7 +17,7 @@ export function LoginForm() {
 		register,
 		handleSubmit,
 		setError,
-		// formState: { errors },
+		formState: { errors },
 	} = useForm<Inputs>()
 	const onSubmit: SubmitHandler<Inputs> = (data) => {
 		login(data.email, data.password)
@@ -42,6 +42,7 @@ export function LoginForm() {
 						{...register("email", { required: true })}
 					/>
 				</div>
+				{errors.email && <div className="mt-2">{errors.email.message}</div>}
 			</div>
 
 			<div>
@@ -65,15 +66,17 @@ export function LoginForm() {
 						{...register("password", { required: true })}
 					/>
 				</div>
+				{errors.password && <div className="mt-2">{errors.password.message}</div>}
 			</div>
 
-			<div>
+			<div className="space-y-2">
 				<Button
 					type="submit"
 					className="flex w-full justify-center "
 				>
 					Sign in
 				</Button>
+				{errors.root && <div>{errors.root.message}</div>}
 			</div>
 		</form>
 	)
