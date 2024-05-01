@@ -4,6 +4,7 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { Button, Input } from "../ui";
 import { useLogin } from "@/hooks";
 import type { AxiosError } from "axios";
+import Link from "next/link";
 
 type Inputs = {
 	email: string,
@@ -49,9 +50,9 @@ export function LoginForm() {
 						Password
 					</label>
 					<div className="text-sm">
-						<a href="#" className="font-semibold text-indigo-400 hover:text-indigo-300">
+						<Link href="/forgot-password" className="font-semibold text-indigo-400 hover:text-indigo-300">
 							Forgot password?
-						</a>
+						</Link>
 					</div>
 				</div>
 				<div className="mt-2">
