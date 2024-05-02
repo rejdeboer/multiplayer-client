@@ -21,7 +21,7 @@ export function LoginForm() {
 	} = useForm<Inputs>()
 	const onSubmit: SubmitHandler<Inputs> = (data) => {
 		login(data.email, data.password)
-			.catch((e: AxiosError) => setError("root.serverError", {
+			.catch((e: AxiosError) => setError("root", {
 				message: e.message,
 			}))
 	}

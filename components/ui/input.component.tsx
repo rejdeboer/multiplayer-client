@@ -1,6 +1,7 @@
 'use client'
 
 import clsx from "clsx";
+import { forwardRef } from "react";
 
 type InputTypeAttribute = Extract<
 	React.HTMLInputTypeAttribute,
@@ -18,12 +19,11 @@ const defaultClasses = clsx(
 	"focus:ring-2 focus:ring-inset focus:ring-indigo-500",
 )
 
-export function Input({
-	className,
-	...props
-}: InputProps) {
+export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
+
 	return (
-		<input className={clsx(defaultClasses, className)} {...props} />
+		<input {...props} className={clsx(defaultClasses, props.className)} ref={ref} />
 	)
-}
+})
+
 

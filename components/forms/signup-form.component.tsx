@@ -24,7 +24,7 @@ export function SignupForm() {
 	} = useForm<Inputs>()
 	const onSubmit: SubmitHandler<Inputs> = (data) => {
 		signup(data.email, data.username, data.password)
-			.catch((e: AxiosError) => setError("root.serverError", {
+			.catch((e: AxiosError) => setError("root", {
 				message: e.message,
 			}))
 	}
@@ -64,10 +64,6 @@ export function SignupForm() {
 								value: 5,
 								message: "Username must have at least 5 characters",
 							},
-							pattern: {
-								value: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]$/i,
-								message: "Password must have a special character, at least 1 number and at least 1 letter"
-							}
 						})}
 					/>
 				</div>
@@ -87,6 +83,10 @@ export function SignupForm() {
 							required: true, minLength: {
 								value: 8,
 								message: "Password must have at least 8 characters"
+							},
+							pattern: {
+								value: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&].{8,}$/i,
+								message: "Password must have a special character, at least 1 number and at least 1 letter"
 							}
 						})}
 					/>

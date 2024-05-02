@@ -14,7 +14,7 @@ export function useSignup(): (
     username: string,
     password: string
   ) => {
-    serverClient.users.create({
+    return serverClient.users.create({
       email,
       username,
       password,
