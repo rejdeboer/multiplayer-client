@@ -42,7 +42,7 @@ export function LoginForm() {
 						{...register("email", { required: true })}
 					/>
 				</div>
-				{errors.email && <div className="mt-2">{errors.email.message}</div>}
+				{errors.email && <div className="mt-2 text-red-500">{errors.email.message}</div>}
 			</div>
 
 			<div>
@@ -66,7 +66,7 @@ export function LoginForm() {
 						{...register("password", { required: true })}
 					/>
 				</div>
-				{errors.password && <div className="mt-2">{errors.password.message}</div>}
+				{errors.password && <div className="mt-2 text-red-500">{errors.password.message}</div>}
 			</div>
 
 			<div className="space-y-2">
@@ -76,7 +76,7 @@ export function LoginForm() {
 				>
 					Sign in
 				</Button>
-				{errors.root && <div>{errors.root.message}</div>}
+				{errors.root && <div className="text-red-500">{errors.root.message}</div>}
 			</div>
 		</form>
 	)
