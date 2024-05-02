@@ -1,3 +1,4 @@
 export type AccessToken = {
-  token: string
+  token: string,
+  expiresInSeconds: number,
 }
