@@ -3,8 +3,8 @@
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { Button, Input } from "../ui";
 import { useSignup } from "@/hooks";
-import type { AxiosError } from "axios";
 import { useRef } from "react";
+import type { ServerError } from "@/lib/server-client";
 
 type Inputs = {
 	email: string,
@@ -24,9 +24,12 @@ export function SignupForm() {
 	} = useForm<Inputs>()
 	const onSubmit: SubmitHandler<Inputs> = (data) => {
 		signup(data.email, data.username, data.password)
-			.catch((e: AxiosError) => setError("root", {
-				message: e.message,
-			}))
+			.catch((e: ServerError) => {
+				console.log(e);
+				setError("root", {
+					message: e.message,
+				})
+			})
 	}
 
 	const password = useRef({});

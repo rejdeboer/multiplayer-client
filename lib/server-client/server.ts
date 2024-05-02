@@ -8,7 +8,7 @@ import type {
 } from "./interceptor";
 import { ResourceAdapter } from "./resource";
 import * as api from "./resources";
-import { AccessToken } from "./store";
+import { AccessToken } from "./types";
 
 export class ServerClient {
   private readonly adapter: ResourceAdapter;

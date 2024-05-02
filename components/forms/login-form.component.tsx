@@ -3,8 +3,8 @@
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { Button, Input } from "../ui";
 import { useLogin } from "@/hooks";
-import type { AxiosError } from "axios";
 import Link from "next/link";
+import type { ServerError } from "@/lib/server-client";
 
 type Inputs = {
 	email: string,
@@ -21,7 +21,7 @@ export function LoginForm() {
 	} = useForm<Inputs>()
 	const onSubmit: SubmitHandler<Inputs> = (data) => {
 		login(data.email, data.password)
-			.catch((e: AxiosError) => setError("root", {
+			.catch((e: ServerError) => setError("root", {
 				message: e.message,
 			}))
 	}

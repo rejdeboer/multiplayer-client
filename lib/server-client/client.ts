@@ -1,7 +1,8 @@
-import axios, { AxiosInstance, CreateAxiosDefaults, Method } from "axios";
+import axios, { AxiosError, AxiosInstance, CreateAxiosDefaults, Method } from "axios";
 import type { InterceptorManager } from "./interceptor";
 import type { QueryParams } from "./resource";
-import { AccessToken } from "./store";
+import type { AccessToken } from "./types";
+import { mapServerError } from "./error";
 
 export class ApiClient {
   private client: AxiosInstance;
@@ -30,10 +31,11 @@ export class ApiClient {
   ): Promise<any> {
     return this.client
       .request({ method, url, data, params })
-      .then((response) => response.data);
+      .then((response) => response.data)
+      .catch((e: AxiosError) => mapServerError(e));
   }
 
   setToken(token: AccessToken) {
-    this.client.defaults.headers["Authorization"] = `Bearer ${token.jwt}`
+    this.client.defaults.headers["Authorization"] = `Bearer ${token.token}`
   }
 }

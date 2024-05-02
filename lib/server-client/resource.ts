@@ -1,7 +1,6 @@
 import { ApiClient } from "./client";
 import type { InterceptorManager } from "./interceptor";
-import { AccessToken } from "./store";
-import type { Credentials, Resource, ResourceCreate } from "./types";
+import type { Credentials, Resource, AccessToken, ResourceCreate } from "./types";
 
 export type QueryParams = {};
 

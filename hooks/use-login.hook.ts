@@ -9,7 +9,7 @@ export function useLogin(): (email: string, password: string) => Promise<void> {
   const login = useCallback(async (email: string, password: string) => {
     return serverClient.authenticate(email, password)
       // TODO: Use `expiresIn` value from server
-      .then(token => setAccessToken(token.jwt, 3600))
+      .then(token => setAccessToken(token.token, 3600))
   }, [])
 
   return login
