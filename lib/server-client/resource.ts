@@ -15,6 +15,13 @@ export class ResourceAdapter {
     return this.client.interceptors;
   }
 
+  async get<R extends Resource>(
+    path: string,
+    params?: QueryParams,
+  ): Promise<R> {
+    return this.client.request("GET", path, undefined, params);
+  }
+
   async post<C extends ResourceCreate, R extends Resource | void>(
     path: string,
     data?: C,
