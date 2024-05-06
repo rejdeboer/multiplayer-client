@@ -13,11 +13,13 @@ import { AccessToken } from "./types";
 export class ServerClient {
   private readonly adapter: ResourceAdapter;
 
+  public documents: api.Documents;
   public users: api.Users;
 
   constructor(baseUrl: string) {
     this.adapter = new ResourceAdapter(baseUrl);
 
+    this.documents = new api.Documents(this.adapter);
     this.users = new api.Users(this.adapter);
   }
 
