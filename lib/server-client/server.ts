@@ -16,8 +16,8 @@ export class ServerClient {
   public documents: api.Documents;
   public users: api.Users;
 
-  constructor(baseUrl: string) {
-    this.adapter = new ResourceAdapter(baseUrl);
+  constructor(baseUrl: string, token?: string) {
+    this.adapter = new ResourceAdapter(baseUrl, token);
 
     this.documents = new api.Documents(this.adapter);
     this.users = new api.Users(this.adapter);
@@ -72,5 +72,5 @@ export class ServerClient {
   }
 }
 
-export const Server = (baseUrl: string): ServerClient =>
-  new ServerClient(baseUrl);
+export const Server = (baseUrl: string, token?: string): ServerClient =>
+  new ServerClient(baseUrl, token);

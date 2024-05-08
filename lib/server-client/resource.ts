@@ -7,8 +7,8 @@ export type QueryParams = {};
 export class ResourceAdapter {
   private client: ApiClient;
 
-  constructor(apiKey: string) {
-    this.client = new ApiClient(apiKey);
+  constructor(apiKey: string, token?: string) {
+    this.client = new ApiClient(apiKey, token);
   }
 
   get interceptors(): InterceptorManager {
