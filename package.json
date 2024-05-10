@@ -10,6 +10,7 @@
     "test": "jest --runInBand"
   },
   "dependencies": {
+    "@headlessui/react": "^2.0.3",
     "axios": "^1.6.8",
     "next": "14.2.3",
     "react": "^18",
