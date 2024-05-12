@@ -1,8 +1,9 @@
+import { CreateDocumentForm } from "@/components/forms";
 import { DocumentList } from "@/components/document";
-import { Button } from "@/components/ui";
+import { DialogButton } from "@/components/ui";
 import { getServerSessionOrRedirect } from "@/lib/auth/get-token-or-redirect";
 
-export async function Documents() {
+export default async function Documents() {
   const server = getServerSessionOrRedirect();
   const documents = await server.documents.list();
 
@@ -15,15 +16,13 @@ export async function Documents() {
               <div className="sm:flex-auto">
                 <h1 className="text-base font-semibold leading-6 text-white">My documents</h1>
                 <p className="mt-2 text-sm text-gray-300">
-                  A list of all the documents in your account including their name.
+                  A list of all the documents in your account.
                 </p>
               </div>
               <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                <Button
-                  type="button"
-                >
-                  Create document
-                </Button>
+                <DialogButton buttonTitle="Create document" dialogTitle="Name your document">
+                  <CreateDocumentForm server={server} />
+                </DialogButton>
               </div>
             </div>
             <DocumentList documents={documents} />
