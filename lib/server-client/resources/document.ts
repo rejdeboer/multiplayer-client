@@ -7,8 +7,8 @@ export class Documents extends ApiResource {
 
   async create(
     resource: DocumentCreate,
-  ): Promise<void> {
-    return this.resources.post<DocumentCreate, void>(
+  ): Promise<Document> {
+    return this.resources.post<DocumentCreate, Document>(
       Documents.TYPE,
       resource,
     );
