@@ -1,11 +1,15 @@
 import { CreateDocumentForm } from "@/components/forms";
 import { DocumentList } from "@/components/document";
 import { DialogButton } from "@/components/ui";
-import { getServerSessionOrRedirect } from "@/lib/auth/get-token-or-redirect";
+import { getServerSession } from "@/lib/auth/browser/get-server-session";
+import useSWR from "swr"
 
 export default async function Documents() {
-  const server = getServerSessionOrRedirect();
-  const documents = await server.documents.list();
+  const server = getServerSession();
+  const {
+    data: documents,
+    mutate,
+  } = useSWR("documents", () => server.documents.list())
 
   return (
     <div className="bg-gray-900">
@@ -21,11 +25,11 @@ export default async function Documents() {
               </div>
               <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
                 <DialogButton buttonTitle="Create document" dialogTitle="Name your document">
-                  <CreateDocumentForm server={server} />
+                  <CreateDocumentForm server={server} mutate={mutate} />
                 </DialogButton>
               </div>
             </div>
-            <DocumentList documents={documents} />
+            {documents && <DocumentList documents={documents} />}
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { setAccessToken } from "@/lib/auth/set-access-token";
+import { setAccessToken } from "@/lib/auth/browser/set-access-token";
 import { PUBLIC_CONFIG } from "@/lib/config";
 import { Server } from "@/lib/server-client";
 import { useCallback } from "react";
