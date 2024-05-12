@@ -1,15 +1,24 @@
+'use client'
+
 import { CreateDocumentForm } from "@/components/forms";
 import { DocumentList } from "@/components/document";
 import { DialogButton } from "@/components/ui";
 import { getServerSession } from "@/lib/auth/browser/get-server-session";
 import useSWR from "swr"
 
-export default async function Documents() {
+export default function Documents() {
+  // TODO: Remove workaround
+  if (typeof window === "undefined") {
+    return <></>
+  }
+
   const server = getServerSession();
   const {
     data: documents,
     mutate,
   } = useSWR("documents", () => server.documents.list())
+
+  console.log(documents)
 
   return (
     <div className="bg-gray-900">
