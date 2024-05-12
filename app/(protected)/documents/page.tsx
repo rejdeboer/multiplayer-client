@@ -1,24 +1,10 @@
-'use client'
-
-import { CreateDocumentForm } from "@/components/forms";
 import { DocumentList } from "@/components/document";
-import { DialogButton } from "@/components/ui";
-import { getServerSession } from "@/lib/auth/browser/get-server-session";
-import useSWR from "swr"
+import { getServerSession } from "@/lib/auth/server/get-server-session";
+import { CreateDocument } from "@/components/document/create-document.component";
 
-export default function Documents() {
-  // TODO: Remove workaround
-  if (typeof window === "undefined") {
-    return <></>
-  }
-
+export default async function Documents() {
   const server = getServerSession();
-  const {
-    data: documents,
-    mutate,
-  } = useSWR("documents", () => server.documents.list())
-
-  console.log(documents)
+  const documents = await server.documents.list();
 
   return (
     <div className="bg-gray-900">
@@ -33,12 +19,10 @@ export default function Documents() {
                 </p>
               </div>
               <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                <DialogButton buttonTitle="Create document" dialogTitle="Name your document">
-                  <CreateDocumentForm server={server} mutate={mutate} />
-                </DialogButton>
+                <CreateDocument />
               </div>
             </div>
-            {documents && <DocumentList documents={documents} />}
+            <DocumentList documents={documents} />
           </div>
         </div>
       </div>

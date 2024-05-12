@@ -30,7 +30,7 @@ export function DocumentList({
 										{document.name}
 									</td>
 									<td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-										<Link href={document.id} className="text-indigo-400 hover:text-indigo-300">
+										<Link href={`/documents/${document.id}`} className="text-indigo-400 hover:text-indigo-300">
 											Edit
 										</Link>
 									</td>

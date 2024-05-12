@@ -1,34 +1,31 @@
+'use client'
+
 import { useForm } from "react-hook-form"
 import type { SubmitHandler } from "react-hook-form"
 import { Button, Input } from "../ui"
-import type { Document, ServerClient } from "@/lib/server-client"
-import type { KeyedMutator } from "swr"
+import { useRouter } from "next/navigation"
+import { getServerSession } from "@/lib/auth/browser/get-server-session"
 
 type Inputs = {
 	name: string
 }
 
-export type CreateDocumentFormProps = {
-	server: ServerClient,
-	mutate: KeyedMutator<Document[]>,
-}
-
-export function CreateDocumentForm({
-	server,
-	mutate,
-}: CreateDocumentFormProps) {
+export function CreateDocumentForm() {
 	const {
 		register,
 		handleSubmit,
 	} = useForm<Inputs>()
+	const { push } = useRouter();
+
+	const server = getServerSession();
 
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		await server.documents.create({ name: data.name })
-		mutate()
+		const document = await server.documents.create({ name: data.name })
+		push(`documents/${document.id}`)
 	}
 
 	return (
-		<form className="space-y-6" onSubmit={handleSubmit(onSubmit)} method="POST" >
+		<form className="flex flex-col space-y-6" onSubmit={handleSubmit(onSubmit)} method="POST" >
 			<Input
 				type="text"
 				{...register("name", { required: true })}
