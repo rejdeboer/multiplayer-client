@@ -1,6 +1,5 @@
-import { DocumentList } from "@/components/document";
+import { DocumentList, CreateDocument } from "@/components/document";
 import { getServerSession } from "@/lib/auth/server/get-server-session";
-import { CreateDocument } from "@/components/document/create-document.component";
 
 export default async function Documents() {
   const server = getServerSession();
