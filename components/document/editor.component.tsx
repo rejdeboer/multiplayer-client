@@ -3,5 +3,5 @@
 import { Editor as MonacoEditor } from "@monaco-editor/react"
 
 export function Editor() {
-	return (<MonacoEditor height="100vh" defaultLanguage="markdown" />)
+	return (<MonacoEditor height="100vh" defaultLanguage="markdown" theme="vs-dark" />)
 }
