@@ -14,6 +14,8 @@
     "@monaco-editor/react": "^4.6.0",
     "axios": "^1.6.8",
     "js-cookie": "^3.0.5",
+    "lib0": "^0.2.93",
+    "monaco-editor": "^0.48.0",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
