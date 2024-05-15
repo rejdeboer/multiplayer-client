@@ -38,9 +38,6 @@ importers:
       react-hook-form:
         specifier: ^7.51.3
         version: 7.51.3(react@18.3.1)
-      y-monaco:
-        specifier: ^0.1.5
-        version: 0.1.5(monaco-editor@0.48.0)(yjs@13.6.15)
       yjs:
         specifier: ^13.6.15
         version: 13.6.15
@@ -2568,13 +2565,6 @@ packages:
   write-file-atomic@4.0.2:
     resolution: {integrity: sha512-7KxauUdBmSdWnmpaGFg+ppNjKF8uNLry8LyzjauQDOVONfFLNKrKvQOxZ/VuTIcS/gge/YNahf5RIIQWTSarlg==}
     engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
-
-  y-monaco@0.1.5:
-    resolution: {integrity: sha512-zyTCMXtewIG+jP9JikJ5NN3/jLCqpkDY3titPIGBrmVeZsJr6qVeFVP3hPfmWOPHGlGZ39KCIzXrC7mFZRNFIw==}
-    engines: {node: '>=12.0.0', npm: '>=6.0.0'}
-    peerDependencies:
-      monaco-editor: '>=0.20.0'
-      yjs: ^13.3.1
 
   y18n@5.0.8:
     resolution: {integrity: sha512-0pfFzegeDWJHJIAmTLRP2DwHjdF5s7jo9tuztdQxAhINCdvS+3nGINqPd00AphqJR/0LhANUS6/+7SCb98YOfA==}
@@ -5637,12 +5627,6 @@ snapshots:
     dependencies:
       imurmurhash: 0.1.4
       signal-exit: 3.0.7
-
-  y-monaco@0.1.5(monaco-editor@0.48.0)(yjs@13.6.15):
-    dependencies:
-      lib0: 0.2.93
-      monaco-editor: 0.48.0
-      yjs: 13.6.15
 
   y18n@5.0.8: {}
 

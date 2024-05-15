@@ -20,7 +20,6 @@
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.51.3",
-    "y-monaco": "^0.1.5",
     "yjs": "^13.6.15"
   },
   "devDependencies": {
