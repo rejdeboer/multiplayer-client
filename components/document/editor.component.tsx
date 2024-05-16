@@ -1,6 +1,12 @@
 'use client'
 
-import { useEditor } from "@/hooks"
+import { Editor as MonacoEditor } from "@monaco-editor/react"
+import { useRef } from "react"
+import { editor } from "monaco-editor"
+import { MonacoBinding, WebsocketProvider } from "@/lib/sync"
+import { PUBLIC_CONFIG } from "@/lib/config"
+import * as Y from "yjs"
+import { getAccessToken } from "@/lib/auth/browser/get-access-token"
 
 export type EditorProps = {
 	documentId: string
@@ -9,7 +15,33 @@ export type EditorProps = {
 export function Editor({
 	documentId
 }: EditorProps) {
-	const { } = useEditor(documentId)
+	const editorRef = useRef<editor.IStandaloneCodeEditor>();
 
-	return (<div className="h-dvh" id="monaco-editor"></div>)
+	function handleEditorDidMount(editor: editor.IStandaloneCodeEditor) {
+		editorRef.current = editor;
+
+		// Initialize yjs
+		const doc = new Y.Doc(); // collection of shared objects
+
+		// Connect to peers with WebSocket
+		const _provider: WebsocketProvider = new WebsocketProvider(PUBLIC_CONFIG.WEBSOCKET_ENDPOINT, documentId, doc, {
+			params: {
+				token: getAccessToken()!
+			}
+		});
+		const type = doc.getText(documentId);
+
+		// Bind yjs doc to Manaco editor
+		const _binding = new MonacoBinding(type, editorRef.current!.getModel()!, new Set([editorRef.current!]));
+
+	}
+
+	return (
+		<MonacoEditor
+			theme="vs-dark"
+			language="markdown"
+			height="100vh"
+			onMount={handleEditorDidMount}
+		/>
+	)
 }
