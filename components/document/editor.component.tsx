@@ -1,13 +1,15 @@
 'use client'
 
-import { Editor as MonacoEditor } from "@monaco-editor/react"
+import { useEditor } from "@/hooks"
 
-export function Editor() {
-	return (
-		<MonacoEditor
-			height="100vh"
-			defaultLanguage="markdown"
-			theme="vs-dark"
-		/>
-	)
+export type EditorProps = {
+	documentId: string
+}
+
+export function Editor({
+	documentId
+}: EditorProps) {
+	const { } = useEditor(documentId)
+
+	return (<div className="h-dvh" id="monaco-editor"></div>)
 }
