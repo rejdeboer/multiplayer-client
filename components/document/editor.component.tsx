@@ -24,7 +24,7 @@ export function Editor({
 		const doc = new Y.Doc(); // collection of shared objects
 
 		// Connect to peers with WebSocket
-		const _provider: WebsocketProvider = new WebsocketProvider(PUBLIC_CONFIG.WEBSOCKET_ENDPOINT, documentId, doc, {
+		const _provider = new WebsocketProvider(PUBLIC_CONFIG.WEBSOCKET_ENDPOINT, documentId, doc, {
 			params: {
 				token: getAccessToken()!
 			}
