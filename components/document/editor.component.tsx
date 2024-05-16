@@ -20,10 +20,8 @@ export function Editor({
 	function handleEditorDidMount(editor: editor.IStandaloneCodeEditor) {
 		editorRef.current = editor;
 
-		// Initialize yjs
-		const doc = new Y.Doc(); // collection of shared objects
+		const doc = new Y.Doc();
 
-		// Connect to peers with WebSocket
 		const _provider = new WebsocketProvider(PUBLIC_CONFIG.WEBSOCKET_ENDPOINT, documentId, doc, {
 			params: {
 				token: getAccessToken()!
@@ -31,7 +29,7 @@ export function Editor({
 		});
 		const type = doc.getText(documentId);
 
-		// Bind yjs doc to Manaco editor
+		// Bind yjs doc to Monaco editor
 		const _binding = new MonacoBinding(type, editorRef.current!.getModel()!, new Set([editorRef.current!]));
 
 	}
