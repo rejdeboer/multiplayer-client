@@ -17,4 +17,8 @@ export class Documents extends ApiResource {
   async list(params?: QueryParams): Promise<Document[]> {
     return this.resources.get(Documents.TYPE, params)
   }
+
+  async delete(id: string): Promise<void> {
+    return this.resources.delete(Documents.TYPE, id)
+  }
 }

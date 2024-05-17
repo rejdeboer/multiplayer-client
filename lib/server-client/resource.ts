@@ -30,6 +30,10 @@ export class ResourceAdapter {
     return this.client.request("POST", path, data, params);
   }
 
+  async delete(path: string, id: string): Promise<void> {
+    return this.client.request("DELETE", `${path}/${id}`)
+  }
+
   async authenticate(credentials: Credentials): Promise<AccessToken> {
     const token = await this.post<Credentials, AccessToken>("/token", credentials)
 
