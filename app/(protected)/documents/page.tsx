@@ -1,10 +1,6 @@
 import { DocumentList, CreateDocument } from "@/components/document";
-import { getServerSession } from "@/lib/auth/server/get-server-session";
 
 export default async function Documents() {
-  const server = getServerSession();
-  const documents = await server.documents.list();
-
   return (
     <div className="bg-gray-900">
       <div className="mx-auto max-w-7xl">
@@ -21,7 +17,7 @@ export default async function Documents() {
                 <CreateDocument />
               </div>
             </div>
-            <DocumentList documents={documents} />
+            <DocumentList />
           </div>
         </div>
       </div>
