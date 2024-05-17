@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "./editor/wasm-bind.sh && next dev",
-    "build": "./editor/wasm-bind.sh && next build",
-    "start": "./editor/wasm-bind.sh && next start",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "lint": "next lint",
     "test": "jest --runInBand"
   },
