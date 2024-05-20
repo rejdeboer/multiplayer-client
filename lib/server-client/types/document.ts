@@ -6,3 +6,7 @@ export type Document = {
 export type DocumentCreate = {
   name: string
 }
+
+export type DocumentContributorCreate = {
+  userId: string
+}
