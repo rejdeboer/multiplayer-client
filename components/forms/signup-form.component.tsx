@@ -88,7 +88,7 @@ export function SignupForm() {
 								message: "Password must have at least 8 characters"
 							},
 							pattern: {
-								value: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&].{9,}$/i,
+								value: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&].{7,}$/i,
 								message: "Password must have a special character, at least 1 number and at least 1 letter"
 							}
 						})}
