@@ -5,3 +5,9 @@ export type UserCreate = ResourceCreate & {
   username: string,
   password: string,
 };
+
+export type UserListItem = {
+  id: string,
+  username: string,
+  email: string,
+}
