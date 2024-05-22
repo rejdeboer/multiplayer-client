@@ -4,6 +4,10 @@ import type { Credentials, Resource, AccessToken, ResourceCreate } from "./types
 
 export type QueryParams = {};
 
+export type SearchParams = QueryParams & {
+  query: string
+}
+
 export class ResourceAdapter {
   private client: ApiClient;
 

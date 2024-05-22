@@ -1,10 +1,6 @@
-import { QueryParams } from "../resource";
+import type { SearchParams } from "../resource";
 import type { ResourceType, UserCreate, UserListItem } from "../types";
 import { ApiResource } from "./base";
-
-export type SearchUsersParams = QueryParams & {
-  query: string
-}
 
 export class Users extends ApiResource {
   static readonly TYPE: ResourceType = "user";
@@ -19,7 +15,7 @@ export class Users extends ApiResource {
   }
 
   async search(
-    params: SearchUsersParams
+    params: SearchParams
   ): Promise<UserListItem[]> {
     return this.resources.get<UserListItem[]>(
       `${Users.TYPE}/search`,
