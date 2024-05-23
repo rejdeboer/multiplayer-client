@@ -33,25 +33,25 @@ export function AddContributorProvider({
 
 	const addUser = useCallback((user: UserListItem) => {
 		setSelectedUsers([...selectedUsers, user])
-	}, [])
+	}, [selectedUsers])
 
 	const removeUser = useCallback((id: string) => {
 		setSelectedUsers(selectedUsers.filter(user => user.id !== id))
-	}, [])
+	}, [selectedUsers])
 
 	const submit = useCallback(async () => {
 		const server = getServerSession()
 
 		// TODO: Create endpoint that adds all users at the same time
-		await Promise.all(selectedUsers.map(user => {
+		await Promise.all(selectedUsers.map(user =>
 			server.documents.addContributor(documentId, { userId: user.id })
-		}))
+		))
 		setSelectedUsers([])
 
 		if (afterSubmit !== undefined) {
 			afterSubmit();
 		}
-	}, [afterSubmit, documentId])
+	}, [selectedUsers, afterSubmit, documentId])
 
 	const value: AddContributorContext = {
 		selectedUsers,
