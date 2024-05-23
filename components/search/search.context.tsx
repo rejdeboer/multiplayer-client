@@ -52,7 +52,7 @@ export function useResults<T extends ReturnType>(): T[] {
 	return results as T[];
 }
 
-export function useQuery(params: SearchParams) {
+export function useQuery(): (params: SearchParams) => void {
 	const { query } = useContext(Context)
-	query(params)
+	return query
 }
