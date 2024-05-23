@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { DeleteDocument } from "./delete-document.component";
 import { useDocumentList } from "@/hooks";
+import { AddContributor } from "./add-contributor.component";
 
 export function DocumentList() {
 	const {
@@ -32,6 +33,7 @@ export function DocumentList() {
 										{document.name}
 									</td>
 									<td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium space-x-4 sm:pr-0">
+										<AddContributor documentId={document.id} />
 										<Link href={`/documents/${document.id}`} className="text-indigo-400 hover:text-indigo-300">
 											Edit
 										</Link>
