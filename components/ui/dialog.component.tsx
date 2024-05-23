@@ -11,7 +11,7 @@ export type DialogProps = {
 }
 
 const defaultClasses = clsx(
-	"max-w-lg space-y-4 border border-gray-700 rounded bg-gray-800 p-12"
+	"max-w-lg space-y-4 border border-gray-700 rounded bg-gray-900 p-8"
 )
 
 export function Dialog({
@@ -23,7 +23,7 @@ export function Dialog({
 }: DialogProps) {
 	return (
 		<HeadlessDialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-50">
-			<div className="fixed inset-0 flex w-screen items-center justify-center p-4">
+			<div className="fixed inset-0 flex w-screen items-center justify-center">
 				<DialogPanel className={clsx(defaultClasses, className)} >
 					<DialogTitle className="font-bold">{title}</DialogTitle>
 					{children}

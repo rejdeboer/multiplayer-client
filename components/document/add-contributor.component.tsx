@@ -19,7 +19,6 @@ export function AddContributor({
 			title="Add contributors"
 			isOpen={showDialog}
 			setIsOpen={setShowDialog}
-			className="space-x-8"
 		>
 			<AddContributorProvider afterSubmit={() => setShowDialog(false)} documentId={documentId}>
 				<AddContributorMenu />
